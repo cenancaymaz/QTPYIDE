@@ -10,11 +10,17 @@ CONFIG += c++17
 
 SOURCES += \
     editor/editor.cpp \
+    editor/history_view.cpp \
+    editor/input_line.cpp \
+    editor/text_editor.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     editor/editor.h \
+    editor/history_view.h \
+    editor/input_line.h \
+    editor/text_editor.h \
     mainwindow.h
 
 TRANSLATIONS += \

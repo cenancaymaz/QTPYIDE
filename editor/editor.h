@@ -3,7 +3,10 @@
 
 #include <QWidget>
 
-#include <QTextEdit>
+#include "history_view.h"
+#include "text_editor.h"
+#include "input_line.h"
+
 
 class CEditor : public QWidget
 {
@@ -13,7 +16,13 @@ public:
 
 private:
 
-    QTextEdit *pTextEditor;
+    CHistoryView *pHistoryView;
+    CTextEditor *pTextEditor;
+    CInputLine *pInputLine;
+
+private slots:
+
+    void InputEntered(QString text);
 
 
 signals:
