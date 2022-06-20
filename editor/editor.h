@@ -4,7 +4,7 @@
 #include <QWidget>
 
 #include "history_view.h"
-#include "text_editor.h"
+#include "code_editor.h"
 #include "input_line.h"
 
 
@@ -17,7 +17,7 @@ public:
 private:
 
     CHistoryView *pHistoryView;
-    CTextEditor *pTextEditor;
+    CCodeEditor *pCodeEditor;
     CInputLine *pInputLine;
 
 private slots:

@@ -9,18 +9,18 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    editor/code_editor.cpp \
     editor/editor.cpp \
     editor/history_view.cpp \
     editor/input_line.cpp \
-    editor/text_editor.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    editor/code_editor.h \
     editor/editor.h \
     editor/history_view.h \
     editor/input_line.h \
-    editor/text_editor.h \
     mainwindow.h
 
 TRANSLATIONS += \
