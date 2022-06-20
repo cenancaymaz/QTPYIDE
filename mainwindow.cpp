@@ -1,11 +1,12 @@
 #include "mainwindow.h"
-#include <QDebug>
+
+#include "editor/editor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    qDebug()<<"Deneme";
-    qDebug()<<"Hasan";
+    CEditor* p_editor = new CEditor(this);
+    setCentralWidget(p_editor);
 }
 
 MainWindow::~MainWindow()
