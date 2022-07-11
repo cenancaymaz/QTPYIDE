@@ -1,10 +1,11 @@
 #ifndef CINPUTLINE_H
 #define CINPUTLINE_H
 
-#include <QWidget>
+#include <QFrame>
 #include <QLineEdit>
+#include <QPushButton>
 
-class CInputLine : public QWidget
+class CInputLine : public QFrame
 {
     Q_OBJECT
 public:
@@ -12,6 +13,7 @@ public:
 
 private:
     QLineEdit* pInputEdit;
+    QPushButton* pSendButton;
 
 private slots:
 

@@ -10,16 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     editor/code_editor.cpp \
+    editor/console_view.cpp \
     editor/editor.cpp \
-    editor/history_view.cpp \
     editor/input_line.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     editor/code_editor.h \
+    editor/console_view.h \
     editor/editor.h \
-    editor/history_view.h \
     editor/input_line.h \
     mainwindow.h
 

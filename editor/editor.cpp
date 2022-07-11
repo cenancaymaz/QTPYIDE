@@ -4,36 +4,35 @@
 #include <QBoxLayout>
 #include <QSplitter>
 
+#include <QSizePolicy>
+
 CEditor::CEditor(QWidget *parent)
     : QWidget{parent}
 {
-    pHistoryView = new CHistoryView(this);
+
+    pOutputView = new CConsoleView(this);
     pCodeEditor = new CCodeEditor(this);
     pInputLine = new CInputLine(this);
 
     connect(pInputLine, &CInputLine::InputEntered, this, &CEditor::InputEntered);
+    connect(pCodeEditor, &CCodeEditor::InputEntered, this, &CEditor::InputEntered);
 
 
     //Layouting
-    QHBoxLayout* hl = new QHBoxLayout(this);
+    QVBoxLayout* vl = new QVBoxLayout(this);
 
     QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
 
-    splitter->addWidget(pHistoryView);
+    splitter->addWidget(pOutputView);
+    splitter->addWidget(pCodeEditor);
+    //splitter->setSizePolicy()
+    splitter->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    QWidget* p_right_widget = new QWidget(this);
-    QVBoxLayout* vl = new QVBoxLayout();
-    p_right_widget->setLayout(vl);
-    vl->addWidget(pCodeEditor);
+    vl->addWidget(splitter);
     vl->addWidget(pInputLine);
-
-    splitter->addWidget(p_right_widget);
-
-    hl->addWidget(splitter);
-
 }
 
 void CEditor::InputEntered(QString text)
 {
-    pHistoryView->WriteHistory(text);
+    pOutputView->WriteInput(text);
 }

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "history_view.h"
+#include "console_view.h"
 #include "code_editor.h"
 #include "input_line.h"
 
@@ -16,7 +16,7 @@ public:
 
 private:
 
-    CHistoryView *pHistoryView;
+    CConsoleView *pOutputView;
     CCodeEditor *pCodeEditor;
     CInputLine *pInputLine;
 

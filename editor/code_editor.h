@@ -16,7 +16,13 @@ private:
     QPushButton* pRunButton;
     QPushButton* pRunSelectedButton;
 
+private slots:
+
+    void SendInput();
+    void SendSelected();
+
 signals:
+    void InputEntered(QString text);
 
 };
 
