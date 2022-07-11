@@ -31,17 +31,6 @@ CEditor::CEditor(QWidget *parent)
 
     hl->addWidget(splitter);
 
-//    QHBoxLayout* hl = new QHBoxLayout();
-//    QVBoxLayout* vl = new QVBoxLayout();
-
-//    setLayout(hl);
-
-//    hl->addWidget(pHistoryView);
-
-//    vl->addWidget(pCodeEditor);
-//    vl->addWidget(pInputLine);
-
-//    hl->addLayout(vl);
 }
 
 void CEditor::InputEntered(QString text)

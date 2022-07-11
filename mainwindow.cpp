@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 
 #include "editor/editor.h"
+#include <QDebug>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

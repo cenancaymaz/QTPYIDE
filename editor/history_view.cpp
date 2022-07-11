@@ -12,6 +12,7 @@ CHistoryView::CHistoryView(QWidget *parent)
 
 void CHistoryView::WriteHistory(QString text)
 {
+
     QString date_text = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm") + " : ";
 
     QPalette palette = qApp->palette();
@@ -23,4 +24,5 @@ void CHistoryView::WriteHistory(QString text)
     setTextColor(qApp->palette().text().color());
     insertPlainText(text);
     insertPlainText("\n");
+
 }

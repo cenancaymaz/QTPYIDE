@@ -5,7 +5,6 @@
 CCodeEditor::CCodeEditor(QWidget *parent)
     : QGroupBox{parent}
 {
-
     setTitle(tr("Code Editor"));
 
     pTextEdit = new QTextEdit(this);
