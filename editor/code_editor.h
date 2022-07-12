@@ -1,11 +1,11 @@
 #ifndef CTEXTEDITOR_H
 #define CTEXTEDITOR_H
 
-#include <QGroupBox>
+#include <QFrame>
 #include <QTextEdit>
 #include <QPushButton>
 
-class CCodeEditor : public QGroupBox
+class CCodeEditor : public QFrame
 {
     Q_OBJECT
 public:

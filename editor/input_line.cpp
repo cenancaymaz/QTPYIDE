@@ -6,9 +6,7 @@
 
 CInputLine::CInputLine(QWidget *parent)
     : QFrame{parent}
-{    
-    //setFrameStyle(QFrame::Box);
-
+{
 //This part is for Windows Dark Theme users
 #ifdef Q_OS_WIN
     QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);

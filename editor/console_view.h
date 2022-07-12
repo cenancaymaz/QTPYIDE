@@ -4,16 +4,35 @@
 #include <QGroupBox>
 #include <QTextEdit>
 
-class CConsoleView : public QGroupBox
+#include <QTabWidget>
+
+class CConsoleView : public QFrame
 {
     Q_OBJECT
 public:
     explicit CConsoleView(QWidget *parent = nullptr);
 
-    void WriteInput(QString text);
+
 
 private:
-    QTextEdit* pTextEdit;
+
+    int LatestTabNo;
+
+    QTabWidget* pTabWidget;
+
+    QTextEdit* CreateAConsole();
+
+public slots:
+
+    void WriteInput(QString text);
+
+private slots:
+
+    void AddTab();
+
+    void CloseTab();
+
+    void TabPosControl();
 
 signals:
 

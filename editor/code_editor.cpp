@@ -1,11 +1,23 @@
 #include "code_editor.h"
 #include <QBoxLayout>
+#include <QSettings>
 
 
 CCodeEditor::CCodeEditor(QWidget *parent)
-    : QGroupBox{parent}
+    : QFrame{parent}
 {
-    setTitle(tr("Code Editor"));
+    //setTitle(tr("Code Editor"));
+
+    //This part is for Windows Dark Theme users
+    #ifdef Q_OS_WIN
+        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
+        if(settings.value("AppsUseLightTheme")==0){
+           setStyleSheet("CCodeEditor{ border: 1px solid ""#FF4C4C4C""; }");
+        }else{
+
+            setStyleSheet("CCodeEditor{ border: 1px solid ligthgray; }");
+        }
+    #endif
 
     pTextEdit = new QTextEdit(this);
 
@@ -30,7 +42,11 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
 void CCodeEditor::SendInput()
 {
-    emit InputEntered(pTextEdit->toPlainText());
+    QString s = pTextEdit->toPlainText();
+
+    if(!s.isEmpty()){
+        emit InputEntered(s);
+    }
 }
 
 void CCodeEditor::SendSelected()
