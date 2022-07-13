@@ -12,11 +12,9 @@ class CConsoleView : public QFrame
 public:
     explicit CConsoleView(QWidget *parent = nullptr);
 
-
-
 private:
+int LatestTabNo;
 
-    int LatestTabNo;
 
     QTabWidget* pTabWidget;
 
@@ -28,7 +26,7 @@ public slots:
 
 private slots:
 
-    void AddTab();
+    QTextEdit* AddTab();
 
     void CloseTab();
 

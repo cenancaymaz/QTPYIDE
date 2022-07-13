@@ -65,6 +65,13 @@ void CConsoleView::WriteInput(QString text)
     //Take selected tab
     QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
 
+    if(!p_text_edit){//There is no text edit in the tab widget
+
+        //Create a new tab
+        p_text_edit = AddTab();
+
+    }
+
     //Set cursor to the end of the edit
     QTextCursor new_cursor = p_text_edit->textCursor();
     new_cursor.movePosition(QTextCursor::End);
@@ -96,7 +103,7 @@ QTextEdit *CConsoleView::CreateAConsole()
     return p_text_edit;
 }
 
-void CConsoleView::AddTab()
+QTextEdit* CConsoleView::AddTab()
 {
     QTextEdit *tab = CreateAConsole();
     QString tabName = QString("Console%1").arg(++LatestTabNo);
@@ -113,6 +120,8 @@ void CConsoleView::AddTab()
 
 
     pTabWidget->setCurrentIndex(pTabWidget->count() - 2);
+
+    return tab;
 }
 
 void CConsoleView::CloseTab()
@@ -123,6 +132,12 @@ void CConsoleView::CloseTab()
     int closed_ind = p_tab_bar->tabAt(p_tool_button->pos());
 
     pTabWidget->removeTab(closed_ind);
+
+    if(closed_ind > 0){
+
+        pTabWidget->setCurrentIndex(closed_ind - 1);
+    }
+
 }
 
 void CConsoleView::TabPosControl()
