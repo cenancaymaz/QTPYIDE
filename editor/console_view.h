@@ -1,10 +1,7 @@
 #ifndef CCONSOLEVIEW_H
 #define CCONSOLEVIEW_H
 
-#include <QGroupBox>
-#include <QTextEdit>
-
-#include <QTabWidget>
+#include <QtWidgets>
 
 class CConsoleView : public QFrame
 {
@@ -13,12 +10,16 @@ public:
     explicit CConsoleView(QWidget *parent = nullptr);
 
 private:
-int LatestTabNo;
 
+    int LatestTabNo;
 
     QTabWidget* pTabWidget;
 
     QTextEdit* CreateAConsole();
+
+    QLineEdit* pInputEdit;
+
+    QPushButton* pSendButton;
 
 public slots:
 
@@ -32,7 +33,8 @@ private slots:
 
     void TabPosControl();
 
-signals:
+    void SendInputFromLine();
+
 
 };
 

@@ -16,11 +16,13 @@ private:
     QTabWidget* pTabWidget;
     QTextEdit *CreateAnEditor();
 
+    QPushButton* pSaveButton;
+    QPushButton* pSaveAsButton;
     QPushButton* pRunButton;
     QPushButton* pRunSelectedButton;
 
 
-    QMap<QString, QTextEdit*> mTabInfos;// Path - Tab
+    QMap<QString, QTextEdit*> mTabInfos;// Path or Designeted name for new file - Tab
     QTextEdit* AddTab(QFileInfo FileInfo = QFileInfo());
 
     void WriteFiletoTab(QTextEdit* Tab, QString Path);
@@ -31,9 +33,11 @@ public slots:
 
 private slots:
 
+    void ControlTextChange();
     void CloseTab();
 
-
+    void SaveFile();
+    void SaveAsFile();
     void SendInput();
     void SendSelected();
 

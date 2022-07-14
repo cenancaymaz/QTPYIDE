@@ -46,6 +46,15 @@ void CFilesView::CreateTree()
     pTree->hideColumn(2);
 
 
+    //For collumn stretch
+    pTree->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+    pTree->header()->resizeSection(0, 200);
+    //pTree->header()->setSectionResizeMode(1, QHeaderView::Stretch);
+    pTree->header()->resizeSection(3, 150);
+    //pTree->header()->setSectionResizeMode(1, QHeaderView::Fixed);
+    //pTree->header()->setStretchLastSection(false);
+
+
     connect(pTree, &QTreeView::doubleClicked, this, &CFilesView::TreeDoubleClicked);
 
 }

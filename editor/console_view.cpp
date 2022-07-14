@@ -49,15 +49,28 @@ CConsoleView::CConsoleView(QWidget *parent)
     pTabWidget->setTabEnabled(0, false);
     pTabWidget->tabBar()->setTabButton(0, QTabBar::RightSide, tb);
 
-
-
     //The First Console
     AddTab();
-    //pTabWidget->addTab(AddAConsole(), tr("Console 1"));
+
+    pInputEdit = new QLineEdit(this);
+    connect(pInputEdit, &QLineEdit::returnPressed, this, &CConsoleView::SendInputFromLine);
+
+    pSendButton = new QPushButton(">", this);
+    pSendButton->setFixedWidth(30);
+    connect(pSendButton, &QPushButton::clicked, this, &CConsoleView::SendInputFromLine);
+
 
 
     QVBoxLayout *vl = new QVBoxLayout(this);
     vl->addWidget(pTabWidget);
+
+    QHBoxLayout* hl = new QHBoxLayout();
+
+    hl->addWidget(new QLabel(tr("In:"), this));
+    hl->addWidget(pInputEdit);
+    hl->addWidget(pSendButton);
+
+    vl->addLayout(hl);
 }
 
 void CConsoleView::WriteInput(QString text)
@@ -149,6 +162,15 @@ void CConsoleView::TabPosControl()
 
         pTabWidget->tabBar()->moveTab(pTabWidget->count() - 2, pTabWidget->count() - 1); //Move new tab button to end
 
+    }
+}
+
+void CConsoleView::SendInputFromLine()
+{
+    pInputEdit->setFocus();
+    if(!pInputEdit->text().isEmpty()){
+        WriteInput(pInputEdit->text());
+        pInputEdit->clear();
     }
 }
 

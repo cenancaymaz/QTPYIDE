@@ -12,7 +12,6 @@ SOURCES += \
     editor/code_editor.cpp \
     editor/console_view.cpp \
     editor/files_view.cpp \
-    editor/input_line.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -20,7 +19,6 @@ HEADERS += \
     editor/code_editor.h \
     editor/console_view.h \
     editor/files_view.h \
-    editor/input_line.h \
     mainwindow.h
 
 TRANSLATIONS += \
