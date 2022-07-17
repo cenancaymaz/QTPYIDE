@@ -21,6 +21,8 @@ private:
     QPushButton* pRunButton;
     QPushButton* pRunSelectedButton;
 
+    void EnableButtons(bool enable = true);
+
 
     QMap<QString, QTextEdit*> mTabInfos;// Path or Designeted name for new file - Tab
     QTextEdit* AddTab(QFileInfo FileInfo = QFileInfo());

@@ -63,6 +63,8 @@ int main(int argc, char *argv[])
     a.setFont(font);
 
     MainWindow w;
-    w.show();
+    w.showMaximized();
+
+    //w.show();
     return a.exec();
 }

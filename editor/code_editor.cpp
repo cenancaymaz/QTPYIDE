@@ -34,6 +34,11 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     pRunSelectedButton = new QPushButton(tr("Run Selected"), this);
     connect(pRunSelectedButton, &QPushButton::clicked, this, &CCodeEditor::SendSelected);
 
+
+    //Disable buttons in opening
+    EnableButtons(false);
+
+
     QVBoxLayout *vl = new QVBoxLayout();
     QGridLayout *gl = new QGridLayout();
 
@@ -50,13 +55,13 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     vl->addLayout(gl);
 
 
-    //This code is to test newly created tabs.
-    QTextEdit* p_tab = AddTab();
-    if(p_tab){//A new tab is created
+//    //This code is to test newly created tabs.
+//    QTextEdit* p_tab = AddTab();
+//    if(p_tab){//A new tab is created
 
-        //connect tab's text change to text change control slot
-        connect(p_tab, &QTextEdit::textChanged, this, &CCodeEditor::ControlTextChange);
-    }
+//        //connect tab's text change to text change control slot
+//        connect(p_tab, &QTextEdit::textChanged, this, &CCodeEditor::ControlTextChange);
+//    }
 }
 
 QTextEdit *CCodeEditor::CreateAnEditor()
@@ -65,6 +70,14 @@ QTextEdit *CCodeEditor::CreateAnEditor()
     QTextEdit* p_text_edit = new QTextEdit(this);
 
     return p_text_edit;
+}
+
+void CCodeEditor::EnableButtons(bool enable)
+{
+    pSaveButton->setEnabled(enable);
+    pSaveAsButton->setEnabled(enable);
+    pRunButton->setEnabled(enable);
+    pRunSelectedButton->setEnabled(enable);
 }
 
 QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
@@ -87,7 +100,12 @@ QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
         FileInfo.setFile(QString("File%1").arg(++LatestTabNo));
     }
 
+    //Insert tab to tab widget
     pTabWidget->insertTab(pTabWidget->count(), tab, FileInfo.fileName());
+
+    //Insert tab tool tip to the tab
+    pTabWidget->setTabToolTip(pTabWidget->count()-1, "Path: " + FileInfo.filePath());
+
 
     //Create Close Button and attach it to the tab
     QToolButton *cb = new QToolButton();
@@ -103,10 +121,7 @@ QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
     mTabInfos.insert(FileInfo.filePath(), tab);
 
     //Enable buttons in case of buttons are disabled by no tab situation
-    pSaveButton->setEnabled(true);
-    pSaveAsButton->setEnabled(true);
-    pRunButton->setEnabled(true);
-    pRunSelectedButton->setEnabled(true);
+    EnableButtons(true);
 
     return tab;
 }
@@ -189,10 +204,7 @@ void CCodeEditor::CloseTab()
     //if there is no tab, disable buttons
     if(pTabWidget->count() == 0){
 
-        pSaveButton->setEnabled(false);
-        pSaveAsButton->setEnabled(false);
-        pRunButton->setEnabled(false);
-        pRunSelectedButton->setEnabled(false);
+        EnableButtons(false);
     }
 
 }
@@ -311,6 +323,9 @@ void CCodeEditor::SaveAsFile()
 
 void CCodeEditor::SendInput()
 {
+    //Save the file
+    SaveFile();
+
     //Take selected tab
     QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
 

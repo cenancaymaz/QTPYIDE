@@ -15,11 +15,17 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    //bool event(QEvent* ev) override;
+
 private:
 
     CConsoleView *pOutputView;
     CCodeEditor *pCodeEditor;
     CFilesView *pFilesView;
+
+    QList<QDockWidget*> mDocks;
+
+
 
 };
 #endif // MAINWINDOW_H
