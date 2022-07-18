@@ -1,27 +1,24 @@
 #include "files_view.h"
+#include "../startup_settings.h"
 
 CFilesView::CFilesView(QWidget *parent)
     : QFrame{parent}
-{
-    //This part is for Windows Dark Theme users
-    #ifdef Q_OS_WIN
-        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
-        if(settings.value("AppsUseLightTheme")==0){
-           setStyleSheet("CFilesView{ border: 1px solid ""#FF4C4C4C""; }");
-        }else{
+{   
+    CStartupSettings* p_set = GetStartupSettings();
 
-            setStyleSheet("CFilesView{ border: 1px solid ligthgray; }");
-        }
-    #endif
+    setStyleSheet(QString("CFilesView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
     //Initial dir
     mCurrentPath = QDir::currentPath();
     mCurrentDir = QDir::current().dirName();
 
     //For setting the font of the Frame
-    QFont font = this->font();
-    font.setPointSize(9);
-    this->setFont(font);
+
+    p_set->SettoDefaultFontSize(this);
+
+//    QFont font = this->font();
+//    font.setPointSize(9);
+//    this->setFont(font);
 
     QLabel* p_label = new QLabel("Current Dir: ", this);
     p_label->setFont(this->font());
@@ -88,8 +85,10 @@ void CFilesView::CreateTree()
     //For file doubleclick mechanism
     connect(pTree, &QTreeView::doubleClicked, this, &CFilesView::TreeDoubleClicked);
 
-    //For setting the font of the tree
-    pTree->setFont(this->font());
+    //For setting the font of the tree  
+    CStartupSettings* p_set = GetStartupSettings();
+    p_set->SettoDefaultFontSize(pTree);
+    p_set->SettoDefaultFontSize(pTree->header());
 
     //For building rigth click mechanism
     BuildContextMenu();

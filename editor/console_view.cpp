@@ -1,35 +1,20 @@
 #include "console_view.h"
 
-#include <QBoxLayout>
-#include <QDateTime>
-#include <QScrollBar>
-#include <QToolButton>
-#include <QTabBar>
-#include <QLabel>
-#include <QTextCursor>
-#include <QDebug>
-#include <QSettings>
+#include <QtWidgets>
 
-#include <QApplication>
+#include "../startup_settings.h"
 
 CConsoleView::CConsoleView(QWidget *parent)
     : QFrame{parent}
 {
-    //setTitle(tr("Console"));
+    CStartupSettings* p_set = GetStartupSettings();
 
-    //This part is for Windows Dark Theme users
-    #ifdef Q_OS_WIN
-        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
-        if(settings.value("AppsUseLightTheme")==0){
-           setStyleSheet("CConsoleView{ border: 1px solid ""#FF4C4C4C""; }");
-        }else{
-
-            setStyleSheet("CConsoleView{ border: 1px solid ligthgray; }");
-        }
-    #endif
+    setStyleSheet(QString("CConsoleView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
     pTabWidget = new QTabWidget(this);
     pTabWidget->setMovable(true);
+
+    p_set->SettoDefaultFontSize(pTabWidget);
 
     //For controlling tab movement
     connect(pTabWidget->tabBar(), &QTabBar::tabMoved, this, &CConsoleView::TabPosControl);
@@ -42,6 +27,9 @@ CConsoleView::CConsoleView(QWidget *parent)
     QToolButton *tb = new QToolButton();
     tb->setText("+");
     tb->setStyleSheet("border : none");
+
+    p_set->SettoDefaultFontSize(tb);
+
     connect(tb, &QToolButton::clicked, this, &CConsoleView::AddTab);
 
     //Create a dummy tab and attach the tool button to it
@@ -53,6 +41,7 @@ CConsoleView::CConsoleView(QWidget *parent)
     AddTab();
 
     pInputEdit = new QLineEdit(this);
+
     connect(pInputEdit, &QLineEdit::returnPressed, this, &CConsoleView::SendInputFromLine);
 
     pSendButton = new QPushButton(">", this);
@@ -75,6 +64,8 @@ CConsoleView::CConsoleView(QWidget *parent)
 
 void CConsoleView::WriteInput(QString text)
 {
+    CStartupSettings* p_set = GetStartupSettings();
+
     //Take selected tab
     QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
 
@@ -90,16 +81,14 @@ void CConsoleView::WriteInput(QString text)
     new_cursor.movePosition(QTextCursor::End);
     p_text_edit->setTextCursor(new_cursor);
 
-    //Find color for input arrow for the mode and add the input arrow
-    QPalette palette = qApp->palette();
-    p_text_edit->setTextColor(palette.color(QPalette::Disabled, QPalette::Text));
+    p_text_edit->setTextColor(p_set->mColors[6]);
     p_text_edit->insertPlainText("> ");
 
     //BUG - When using "run selected", this line does not work
     text.replace("\n", "\n   ");//for aligning to input arrow
 
     //Add the input text with appropriate color
-    p_text_edit->setTextColor(qApp->palette().text().color());
+    p_text_edit->setTextColor(p_set->mColors[2]);
     p_text_edit->insertPlainText(text);
     p_text_edit->insertPlainText("\n");
 
@@ -127,6 +116,10 @@ QTextEdit* CConsoleView::AddTab()
     QToolButton *cb = new QToolButton();
     cb->setText("x");
     cb->setStyleSheet("border : none");
+
+    CStartupSettings* p_set = GetStartupSettings();
+    p_set->SettoDefaultFontSize(cb);
+
     connect(cb, &QToolButton::clicked, this, &CConsoleView::CloseTab);
 
     pTabWidget->tabBar()->setTabButton(pTabWidget->count() - 2, QTabBar::RightSide, cb);

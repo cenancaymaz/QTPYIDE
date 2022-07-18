@@ -3,10 +3,14 @@
 #include <QtWidgets>
 #include <QDebug>
 
+#include "startup_settings.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    SetAppTheme();
+
     setDockNestingEnabled(true);
 
     QDockWidget *dock1 = new QDockWidget(tr("Files"),this);
@@ -54,15 +58,53 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pCodeEditor, &CCodeEditor::InputEntered, pOutputView, &CConsoleView::WriteInput);
     connect(pFilesView, &CFilesView::FileSelected, pCodeEditor, &CCodeEditor::OpenFile);
 
-
     //This one is for startup dock sizes
     //Somehow, we can't use the event handler because if we use, we lost splitter of the docks.
     //Therefore, we use singleshot timer with lambda expression
-    QTimer::singleShot(200, [&]() {resizeDocks({mDocks[0], mDocks[1]}, {400, width() - 400}, Qt::Horizontal); } );
+    QTimer::singleShot(400, this, [this]() {resizeDocks({this->mDocks[0], this->mDocks[1]}, {400, this->width() - 400}, Qt::Horizontal); } );
+
 
 }
 
 MainWindow::~MainWindow()
 {
+    CStartupSettings* p_set = GetStartupSettings();
+    delete p_set;
+}
+
+void MainWindow::SetAppTheme()
+{
+    CStartupSettings* p_set = GetStartupSettings();
+
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+
+    QPalette theme_palette;
+
+    theme_palette.setColor(QPalette::Window, p_set->mColors[0]);
+    theme_palette.setColor(QPalette::WindowText, QColor(p_set->mColors[2]));
+
+    theme_palette.setColor(QPalette::Base, QColor(p_set->mColors[3]));
+    theme_palette.setColor(QPalette::AlternateBase, p_set->mColors[0]);
+    theme_palette.setColor(QPalette::ToolTipBase, p_set->mColors[4]);
+    theme_palette.setColor(QPalette::ToolTipText, p_set->mColors[4]);
+
+    theme_palette.setColor(QPalette::Text, QColor(p_set->mColors[2]));
+    theme_palette.setColor(QPalette::Disabled, QPalette::Text, p_set->mColors[1]);
+    theme_palette.setColor(QPalette::Button, p_set->mColors[0]);
+    theme_palette.setColor(QPalette::ButtonText, QColor(p_set->mColors[5]));
+    theme_palette.setColor(QPalette::Disabled, QPalette::ButtonText, p_set->mColors[1]);
+    theme_palette.setColor(QPalette::BrightText, p_set->mColors[6]);
+    theme_palette.setColor(QPalette::Link, QColor(p_set->mColors[7]));
+
+    theme_palette.setColor(QPalette::Highlight, QColor(p_set->mColors[18]));
+    theme_palette.setColor(QPalette::HighlightedText, QColor(p_set->mColors[2]));
+    theme_palette.setColor(QPalette::Disabled, QPalette::HighlightedText, p_set->mColors[1]);
+
+    qApp->setPalette(theme_palette);
+
+    //qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2aa198; border: 1px solid white; }");
+    qApp->setStyleSheet(QString("QToolTip { color: %1; background-color: %2; border: 1px solid white; }")
+                        .arg(p_set->mColors[4], p_set->mColors[9]));
+
 }
 

@@ -12,14 +12,18 @@ SOURCES += \
     editor/code_editor.cpp \
     editor/console_view.cpp \
     editor/files_view.cpp \
+    editor/python_syntax_highlighter.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    startup_settings.cpp
 
 HEADERS += \
     editor/code_editor.h \
     editor/console_view.h \
     editor/files_view.h \
-    mainwindow.h
+    editor/python_syntax_highlighter.h \
+    mainwindow.h \
+    startup_settings.h
 
 TRANSLATIONS += \
     QtPyIDE_tr_TR.ts

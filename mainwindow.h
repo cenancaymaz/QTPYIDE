@@ -25,6 +25,8 @@ private:
 
     QList<QDockWidget*> mDocks;
 
+    void SetAppTheme();
+
 
 
 };

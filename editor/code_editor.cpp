@@ -1,24 +1,33 @@
 #include "code_editor.h"
 #include <QBoxLayout>
-#include <QSettings>
+
+#include "../startup_settings.h"
 
 
 CCodeEditor::CCodeEditor(QWidget *parent)
     : QFrame{parent}
 {
-    //This part is for Windows Dark Theme users
-    #ifdef Q_OS_WIN
-        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
-        if(settings.value("AppsUseLightTheme")==0){
-           setStyleSheet("CCodeEditor{ border: 1px solid ""#FF4C4C4C""; }");
-        }else{
+    CStartupSettings* p_set = GetStartupSettings();
 
-            setStyleSheet("CCodeEditor{ border: 1px solid ligthgray; }");
-        }
-    #endif
+    setStyleSheet(QString("CCodeEditor{ border: 1px solid %1; }").arg(p_set->mColors[10]));
+
+    //This part is for Windows Dark Theme users
+//    #ifdef Q_OS_WIN
+//        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
+//        if(settings.value("AppsUseLightTheme")==0){
+//           setStyleSheet("CCodeEditor{ border: 1px solid ""#FF4C4C4C""; }");
+//        }else{
+
+//            setStyleSheet("CCodeEditor{ border: 1px solid ligthgray; }");
+//        }
+//    #endif
 
     pTabWidget = new QTabWidget(this);
     pTabWidget->setMovable(true);
+
+    p_set->SettoDefaultFontSize(pTabWidget);
+
+
     LatestTabNo = 0;
 
     pSaveButton = new QPushButton(tr("Save"), this);
@@ -69,6 +78,11 @@ QTextEdit *CCodeEditor::CreateAnEditor()
     //Create an empty Editor
     QTextEdit* p_text_edit = new QTextEdit(this);
 
+
+    PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(p_text_edit->document());
+
+    mHighligtherVector.append(p_python_highlighter);
+
     return p_text_edit;
 }
 
@@ -111,6 +125,8 @@ QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
     QToolButton *cb = new QToolButton();
     cb->setText("x");
     cb->setStyleSheet("border : none");
+    CStartupSettings* p_set = GetStartupSettings();
+    p_set->SettoDefaultFontSize(cb);
     connect(cb, &QToolButton::clicked, this, &CCodeEditor::CloseTab);
     pTabWidget->tabBar()->setTabButton(pTabWidget->count() - 1, QTabBar::RightSide, cb);
 

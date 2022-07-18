@@ -2,6 +2,7 @@
 #define CTEXTEDITOR_H
 
 #include <QtWidgets>
+#include "python_syntax_highlighter.h"
 
 class CCodeEditor : public QFrame
 {
@@ -25,6 +26,7 @@ private:
 
 
     QMap<QString, QTextEdit*> mTabInfos;// Path or Designeted name for new file - Tab
+    QVector<PythonSyntaxHighlighter*> mHighligtherVector; //it is here just for clearing the false positive meamory leak warning
     QTextEdit* AddTab(QFileInfo FileInfo = QFileInfo());
 
     void WriteFiletoTab(QTextEdit* Tab, QString Path);
