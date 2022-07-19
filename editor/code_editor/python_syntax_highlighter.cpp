@@ -1,7 +1,7 @@
 #include "python_syntax_highlighter.h"
 #include "qtextdocument.h"
 #include <QDebug>
-#include "../startup_settings.h"
+#include "../../startup_settings.h"
 
 PythonSyntaxHighlighter::PythonSyntaxHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)

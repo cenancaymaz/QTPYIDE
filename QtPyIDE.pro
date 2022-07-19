@@ -9,19 +9,23 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    editor/code_editor.cpp \
+    editor/code_editor/code_editor.cpp \
+    editor/code_editor/line_number_area.cpp \
+    editor/code_editor/python_syntax_highlighter.cpp \
+    editor/code_editor/text_edit_highlighter.cpp \
     editor/console_view.cpp \
     editor/files_view.cpp \
-    editor/python_syntax_highlighter.cpp \
     main.cpp \
     mainwindow.cpp \
     startup_settings.cpp
 
 HEADERS += \
-    editor/code_editor.h \
+    editor/code_editor/code_editor.h \
+    editor/code_editor/line_number_area.h \
+    editor/code_editor/python_syntax_highlighter.h \
+    editor/code_editor/text_edit_highlighter.h \
     editor/console_view.h \
     editor/files_view.h \
-    editor/python_syntax_highlighter.h \
     mainwindow.h \
     startup_settings.h
 

@@ -1,7 +1,8 @@
 #include "code_editor.h"
+
 #include <QBoxLayout>
 
-#include "../startup_settings.h"
+#include "../../startup_settings.h"
 
 
 CCodeEditor::CCodeEditor(QWidget *parent)
@@ -11,16 +12,6 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
     setStyleSheet(QString("CCodeEditor{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
-    //This part is for Windows Dark Theme users
-//    #ifdef Q_OS_WIN
-//        QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",QSettings::NativeFormat);
-//        if(settings.value("AppsUseLightTheme")==0){
-//           setStyleSheet("CCodeEditor{ border: 1px solid ""#FF4C4C4C""; }");
-//        }else{
-
-//            setStyleSheet("CCodeEditor{ border: 1px solid ligthgray; }");
-//        }
-//    #endif
 
     pTabWidget = new QTabWidget(this);
     pTabWidget->setMovable(true);
@@ -30,19 +21,10 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
     LatestTabNo = 0;
 
-    pSaveButton = new QPushButton(tr("Save"), this);
-    connect(pSaveButton, &QPushButton::clicked, this, &CCodeEditor::SaveFile);
-
-    pSaveAsButton = new QPushButton(tr("Save As"), this);
-    connect(pSaveAsButton, &QPushButton::clicked, this, &CCodeEditor::SaveAsFile);
-
-
-    pRunButton = new QPushButton(tr("Run"), this);
-    connect(pRunButton, &QPushButton::clicked, this, &CCodeEditor::SendInput);
-
-    pRunSelectedButton = new QPushButton(tr("Run Selected"), this);
-    connect(pRunSelectedButton, &QPushButton::clicked, this, &CCodeEditor::SendSelected);
-
+    CreateSaveButton();
+    CreateSaveAsButton();
+    CreateRunButton();
+    CreateRunSelectedButton();
 
     //Disable buttons in opening
     EnableButtons(false);
@@ -73,17 +55,60 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 //    }
 }
 
-QTextEdit *CCodeEditor::CreateAnEditor()
+CTextEditHighlighter *CCodeEditor::CreateAnEditor()
 {
     //Create an empty Editor
-    QTextEdit* p_text_edit = new QTextEdit(this);
-
+    CTextEditHighlighter* p_text_edit = new CTextEditHighlighter(this);
 
     PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(p_text_edit->document());
 
     mHighligtherVector.append(p_python_highlighter);
 
     return p_text_edit;
+}
+
+void CCodeEditor::CreateSaveButton()
+{
+    pSaveButton = new QPushButton(tr("Save"), this);
+    connect(pSaveButton, &QPushButton::clicked, this, &CCodeEditor::SaveFile);
+
+    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+S"), this);
+    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SaveFile);
+
+    pSaveButton->setToolTip(tr("Ctrl + S"));
+}
+
+void CCodeEditor::CreateSaveAsButton()
+{
+    pSaveAsButton = new QPushButton(tr("Save As"), this);
+    connect(pSaveAsButton, &QPushButton::clicked, this, &CCodeEditor::SaveAsFile);
+
+    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+Shift+S"), this);
+    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SaveAsFile);
+
+    pSaveAsButton->setToolTip(tr("Ctrl + Shift + S"));
+}
+
+void CCodeEditor::CreateRunButton()
+{
+    pRunButton = new QPushButton(tr("Run"), this);
+    connect(pRunButton, &QPushButton::clicked, this, &CCodeEditor::SendInput);
+
+    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+R"), this);
+    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SendInput);
+
+    pRunButton->setToolTip(tr("Ctrl + R"));
+}
+
+void CCodeEditor::CreateRunSelectedButton()
+{
+    pRunSelectedButton = new QPushButton(tr("Run Selected"), this);
+    connect(pRunSelectedButton, &QPushButton::clicked, this, &CCodeEditor::SendSelected);
+
+    QShortcut *p_shortcut = new QShortcut(QKeySequence("F9"), this);
+    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SendSelected);
+
+    pRunSelectedButton->setToolTip(tr("F9"));
 }
 
 void CCodeEditor::EnableButtons(bool enable)
@@ -94,7 +119,7 @@ void CCodeEditor::EnableButtons(bool enable)
     pRunSelectedButton->setEnabled(enable);
 }
 
-QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
+CTextEditHighlighter *CCodeEditor::AddTab(QFileInfo FileInfo)
 {
     if(!FileInfo.fileName().isEmpty() || !FileInfo.fileName().isEmpty()){//if the tab created by selecting a file from file view
 
@@ -108,7 +133,7 @@ QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
 
 
     //Create a tab
-    QTextEdit *tab = CreateAnEditor();
+    CTextEditHighlighter *tab = CreateAnEditor();
 
     if(FileInfo.fileName().isEmpty()){//A new file that is created by user
         FileInfo.setFile(QString("File%1").arg(++LatestTabNo));
@@ -142,7 +167,7 @@ QTextEdit *CCodeEditor::AddTab(QFileInfo FileInfo)
     return tab;
 }
 
-void CCodeEditor::WriteFiletoTab(QTextEdit *Tab, QString Path)
+void CCodeEditor::WriteFiletoTab(CTextEditHighlighter *Tab, QString Path)
 {
     QFile file(Path);
     if(file.open(QIODevice::ReadOnly)) {
@@ -163,7 +188,7 @@ void CCodeEditor::WriteFiletoTab(QTextEdit *Tab, QString Path)
 
 void CCodeEditor::OpenFile(QFileInfo FileInfo)
 {
-    QTextEdit* p_tab = AddTab(FileInfo);
+    CTextEditHighlighter* p_tab = AddTab(FileInfo);
 
     if(p_tab){//A new tab is created
 
@@ -171,7 +196,7 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
         WriteFiletoTab(p_tab, FileInfo.filePath());
 
         //connect tab's text change to text change control slot
-        connect(p_tab, &QTextEdit::textChanged, this, &CCodeEditor::ControlTextChange);
+        connect(p_tab, &CTextEditHighlighter::textChanged, this, &CCodeEditor::ControlTextChange);
 
 
     }else{//The tab is already created. Open this tab
@@ -202,7 +227,7 @@ void CCodeEditor::CloseTab()
     int closed_ind = pTabWidget->tabBar()->tabAt(p_tool_button->pos());
 
     //Take the tab
-    QTextEdit* p_tab = qobject_cast<QTextEdit*>(pTabWidget->widget(closed_ind));
+    CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->widget(closed_ind));
 
     //Remove tab from tab infos
     QString key = mTabInfos.key(p_tab);
@@ -228,7 +253,7 @@ void CCodeEditor::CloseTab()
 void CCodeEditor::SaveFile()
 {
     //Take the selected tab
-    QTextEdit* p_tab = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
+    CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
 
     //Find the path of the tab
     QString path = mTabInfos.key(p_tab);
@@ -285,7 +310,7 @@ void CCodeEditor::SaveAsFile()
     //File select dialog
     QString path = QFileDialog::getSaveFileName(this, tr("Save File"),
                                "",
-                               tr("Text files (*.txt)"));
+                               tr("Text files (*.py)"));
 
 
     //A file name selected
@@ -309,7 +334,7 @@ void CCodeEditor::SaveAsFile()
             QTextStream stream(&file);
 
             //Take the selected tab
-            QTextEdit* p_tab = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
+            CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
 
             //Write text to the stream
             stream<< p_tab->toPlainText().toUtf8();
@@ -343,7 +368,7 @@ void CCodeEditor::SendInput()
     SaveFile();
 
     //Take selected tab
-    QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
+    CTextEditHighlighter* p_text_edit = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
 
     if(!p_text_edit){//There is no text edit in the tab widget
         return;
@@ -359,7 +384,7 @@ void CCodeEditor::SendInput()
 void CCodeEditor::SendSelected()
 {
     //Take selected tab
-    QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
+    CTextEditHighlighter* p_text_edit = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
 
     if(!p_text_edit){//There is no text edit in the tab widget
         return;

@@ -21,7 +21,11 @@ CFilesView::CFilesView(QWidget *parent)
 //    this->setFont(font);
 
     QLabel* p_label = new QLabel("Current Dir: ", this);
-    p_label->setFont(this->font());
+    p_set->SettoDefaultFontSize(p_label);
+    QFont label_font = p_label->font();
+    label_font.setBold(true);
+    p_label->setFont(label_font);
+
     CreateCurrentDirButton();
     CreateTree();
 
@@ -59,7 +63,7 @@ void CFilesView::CreateTree()
 
     //Give a name filter to model an set the filtered out hidden
     QStringList name_filters;
-    name_filters << "*.txt";
+    name_filters << "*.py";
     pModel->setNameFilters(name_filters);
     pModel->setNameFilterDisables(false);
 
@@ -243,7 +247,7 @@ void CFilesView::NewFileActionTriggered()
     }
 
     //Create file path for the new file
-    QString file_path = dir_path + "/" + file_name.remove(".txt") + ".txt";
+    QString file_path = dir_path + "/" + file_name.remove(".py") + ".py";
 
     //Create the file with QFile and open
     QFile file(file_path);

@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "python_syntax_highlighter.h"
+#include "text_edit_highlighter.h"
 
 class CCodeEditor : public QFrame
 {
@@ -15,21 +16,25 @@ private:
     int LatestTabNo;
 
     QTabWidget* pTabWidget;
-    QTextEdit *CreateAnEditor();
+    CTextEditHighlighter *CreateAnEditor();
 
     QPushButton* pSaveButton;
+    void CreateSaveButton();
     QPushButton* pSaveAsButton;
+    void CreateSaveAsButton();
     QPushButton* pRunButton;
+    void CreateRunButton();
     QPushButton* pRunSelectedButton;
+    void CreateRunSelectedButton();
 
     void EnableButtons(bool enable = true);
 
 
-    QMap<QString, QTextEdit*> mTabInfos;// Path or Designeted name for new file - Tab
+    QMap<QString, CTextEditHighlighter*> mTabInfos;// Path or Designeted name for new file - Tab
     QVector<PythonSyntaxHighlighter*> mHighligtherVector; //it is here just for clearing the false positive meamory leak warning
-    QTextEdit* AddTab(QFileInfo FileInfo = QFileInfo());
+    CTextEditHighlighter* AddTab(QFileInfo FileInfo = QFileInfo());
 
-    void WriteFiletoTab(QTextEdit* Tab, QString Path);
+    void WriteFiletoTab(CTextEditHighlighter* Tab, QString Path);
 
 public slots:
 

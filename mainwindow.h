@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 #include "editor/console_view.h"
-#include "editor/code_editor.h"
+#include "editor/code_editor/code_editor.h"
 #include "editor/files_view.h"
 
 class MainWindow : public QMainWindow
