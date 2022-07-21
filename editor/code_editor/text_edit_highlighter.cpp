@@ -3,9 +3,16 @@
 #include "../../startup_settings.h"
 #include "line_number_area.h"
 
+
+#include "../console_view/python_process.h"
+
 CTextEditHighlighter::CTextEditHighlighter(QWidget *parent) :
     QTextEdit(parent)
 {
+    pSyntaxControlTimer = new QTimer(this);
+    pSyntaxControlTimer->setInterval(3000);
+    connect(pSyntaxControlTimer, &QTimer::timeout, this, &CTextEditHighlighter::syntaxControl);
+
     // Line numbers
     lineNumberArea = new CLineNumberArea(this);
     ///
@@ -47,6 +54,7 @@ void CTextEditHighlighter::updateLineNumberArea(int /*slider_pos*/)
 }
 void CTextEditHighlighter::updateLineNumberArea()
 {
+    pSyntaxControlTimer->start();
     /*
      * When the signal is emitted, the sliderPosition has been adjusted according to the action,
      * but the value has not yet been propagated (meaning the valueChanged() signal was not yet emitted),
@@ -83,6 +91,17 @@ void CTextEditHighlighter::updateLineNumberArea()
 //        if (dy <= this->document()->documentMargin() + prev_block_height)
 //            this->verticalScrollBar()->setSliderPosition(slider_pos - (this->document()->documentMargin() + prev_block_height));
 //    }
+
+}
+
+void CTextEditHighlighter::syntaxControl()
+{
+    CPythonProcess* p_python_process = new CPythonProcess(this);
+
+    p_python_process->ControlSyntax("main.py");
+
+    //p_python_process->deleteLater();
+    //delete p_python_process;
 
 }
 

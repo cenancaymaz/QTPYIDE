@@ -125,7 +125,6 @@ CTextEditHighlighter *CCodeEditor::AddTab(QFileInfo FileInfo)
 
         if(mTabInfos.value(FileInfo.filePath())){//if there is a tab with the same file info
 
-            qDebug()<<"Same occurred";
             return NULL;
         }
 
@@ -262,9 +261,7 @@ void CCodeEditor::SaveFile()
     QString tab_name_wo_change = tab_name;
     tab_name_wo_change.chop(1);//to clear *
 
-    qDebug()<<path;
-    qDebug()<<tab_name;
-    qDebug()<<tab_name_wo_change;
+
 
     if(tab_name == path || tab_name_wo_change == path){
         //if tab name and path is the same, this tab is newly created, not opened.
@@ -277,6 +274,8 @@ void CCodeEditor::SaveFile()
     QFile file(path);
     if(file.open(QIODevice::ReadWrite)) {
 
+        //clear the contents of the file
+        file.resize(0);
         //Create a text stream
         QTextStream stream(&file);
 
@@ -329,6 +328,9 @@ void CCodeEditor::SaveAsFile()
         //Open the file
         QFile file(path);
         if(file.open(QIODevice::ReadWrite)) {
+
+            //clear the contents of the file
+            file.resize(0);
 
             //Create a text stream
             QTextStream stream(&file);
@@ -390,7 +392,11 @@ void CCodeEditor::SendSelected()
         return;
     }
 
-    QString s = p_text_edit->textCursor().selectedText();
+    QString s = p_text_edit->textCursor().selection().toPlainText();
+
+    qDebug()<<s;
+    //s.replace("\n", "\r\n");
+
 
     if(!s.isEmpty()){
         emit InputEntered(s);

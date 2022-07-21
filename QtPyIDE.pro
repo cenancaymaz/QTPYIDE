@@ -14,6 +14,8 @@ SOURCES += \
     editor/code_editor/python_syntax_highlighter.cpp \
     editor/code_editor/text_edit_highlighter.cpp \
     editor/console_view/console_view.cpp \
+    editor/console_view/python_process.cpp \
+    editor/console_view/single_console.cpp \
     editor/files_view.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -25,6 +27,8 @@ HEADERS += \
     editor/code_editor/python_syntax_highlighter.h \
     editor/code_editor/text_edit_highlighter.h \
     editor/console_view/console_view.h \
+    editor/console_view/python_process.h \
+    editor/console_view/single_console.h \
     editor/files_view.h \
     mainwindow.h \
     startup_settings.h

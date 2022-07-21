@@ -4,6 +4,9 @@
 
 #include "../../startup_settings.h"
 
+
+#include "python_process.h"
+
 CConsoleView::CConsoleView(QWidget *parent)
     : QFrame{parent}
 {
@@ -30,7 +33,7 @@ CConsoleView::CConsoleView(QWidget *parent)
 
     p_set->SettoDefaultFontSize(tb);
 
-    connect(tb, &QToolButton::clicked, this, &CConsoleView::AddTab);
+    connect(tb, &QToolButton::clicked, this, &CConsoleView::AddEmptyTab);
 
     //Create a dummy tab and attach the tool button to it
     pTabWidget->addTab(new QLabel("You can open a console by pressing <b>\"+\"</b>"), QString());
@@ -38,7 +41,7 @@ CConsoleView::CConsoleView(QWidget *parent)
     pTabWidget->tabBar()->setTabButton(0, QTabBar::RightSide, tb);
 
     //The First Console
-    AddTab();
+    AddEmptyTab();
 
     pInputEdit = new QLineEdit(this);
 
@@ -47,7 +50,6 @@ CConsoleView::CConsoleView(QWidget *parent)
     pSendButton = new QPushButton(">", this);
     pSendButton->setFixedWidth(30);
     connect(pSendButton, &QPushButton::clicked, this, &CConsoleView::SendInputFromLine);
-
 
 
     QVBoxLayout *vl = new QVBoxLayout(this);
@@ -64,36 +66,30 @@ CConsoleView::CConsoleView(QWidget *parent)
 
 void CConsoleView::WriteInput(QString text)
 {
-    CStartupSettings* p_set = GetStartupSettings();
-
     //Take selected tab
-    QTextEdit* p_text_edit = qobject_cast<QTextEdit*>(pTabWidget->currentWidget());
+    CSingleConsole* p_single_console = qobject_cast<CSingleConsole*>(pTabWidget->currentWidget());
 
-    if(!p_text_edit){//There is no text edit in the tab widget
+    if(!p_single_console){//There is no console in the tab widget
 
         //Create a new tab
-        p_text_edit = AddTab();
+        p_single_console = AddTab();
 
     }
 
-    //Set cursor to the end of the edit
-    QTextCursor new_cursor = p_text_edit->textCursor();
-    new_cursor.movePosition(QTextCursor::End);
-    p_text_edit->setTextCursor(new_cursor);
+    //Sen input to the console
+    p_single_console->WriteInput(text);
 
-    p_text_edit->setTextColor(p_set->mColors[6]);
-    p_text_edit->insertPlainText("> ");
+}
 
-    //BUG - When using "run selected", this line does not work
-    text.replace("\n", "\n   ");//for aligning to input arrow
+void CConsoleView::AddEmptyTab()
+{
+    CSingleConsole* p_single_console = AddTab();
+    p_single_console->StartProcess();
+}
 
-    //Add the input text with appropriate color
-    p_text_edit->setTextColor(p_set->mColors[2]);
-    p_text_edit->insertPlainText(text);
-    p_text_edit->insertPlainText("\n");
+void CConsoleView::AddScriptTab()
+{
 
-    //Set scrollbar to the bottom
-    p_text_edit->verticalScrollBar()->setValue(p_text_edit->verticalScrollBar()->maximum());
 }
 
 QTextEdit *CConsoleView::CreateAConsole()
@@ -105,12 +101,11 @@ QTextEdit *CConsoleView::CreateAConsole()
     return p_text_edit;
 }
 
-QTextEdit* CConsoleView::AddTab()
+CSingleConsole *CConsoleView::AddTab()
 {
-    QTextEdit *tab = CreateAConsole();
+    CSingleConsole *p_console = new CSingleConsole(this);
     QString tabName = QString("Console%1").arg(++LatestTabNo);
-    pTabWidget->insertTab(pTabWidget->count() - 1, tab, tabName);
-
+    pTabWidget->insertTab(pTabWidget->count() - 1, p_console, tabName);
 
     //For Close Button
     QToolButton *cb = new QToolButton();
@@ -127,7 +122,7 @@ QTextEdit* CConsoleView::AddTab()
 
     pTabWidget->setCurrentIndex(pTabWidget->count() - 2);
 
-    return tab;
+    return p_console;
 }
 
 void CConsoleView::CloseTab()
@@ -139,10 +134,12 @@ void CConsoleView::CloseTab()
 
     pTabWidget->removeTab(closed_ind);
 
+
     if(closed_ind > 0){
 
         pTabWidget->setCurrentIndex(closed_ind - 1);
     }
+
 
 }
 
@@ -151,7 +148,7 @@ void CConsoleView::TabPosControl()
     //Take the last tab class name
     QString last_tab_class(pTabWidget->widget(pTabWidget->count() - 1)->metaObject()->className());
 
-    if(last_tab_class == "QTextEdit"){//it is a console!
+    if(last_tab_class == "CSingleConsole"){//it is a console!
 
         pTabWidget->tabBar()->moveTab(pTabWidget->count() - 2, pTabWidget->count() - 1); //Move new tab button to end
 

@@ -2,6 +2,7 @@
 #define CCONSOLEVIEW_H
 
 #include <QtWidgets>
+#include "single_console.h"
 
 class CConsoleView : public QFrame
 {
@@ -27,7 +28,11 @@ public slots:
 
 private slots:
 
-    QTextEdit* AddTab();
+    void AddEmptyTab();
+
+    void AddScriptTab();
+
+    CSingleConsole* AddTab();
 
     void CloseTab();
 

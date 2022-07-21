@@ -18,8 +18,8 @@ signals:
 
 
 public slots:
-
     void resizeEvent(QResizeEvent *e);
+
 
 private slots:
 
@@ -27,10 +27,12 @@ private slots:
     void updateLineNumberArea(QRectF /*rect_f*/);
     void updateLineNumberArea(int /*slider_pos*/);
     void updateLineNumberArea();
+    void syntaxControl();
 
 private:
 
     QWidget *lineNumberArea;
+    QTimer* pSyntaxControlTimer;
 
 };
 

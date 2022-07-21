@@ -70,6 +70,7 @@ MainWindow::~MainWindow()
 {
     CStartupSettings* p_set = GetStartupSettings();
     delete p_set;
+
 }
 
 void MainWindow::SetAppTheme()
