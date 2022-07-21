@@ -1,6 +1,6 @@
 #include "line_number_area.h"
 
-#include "text_edit_highlighter.h"
+#include "single_editor.h"
 
 CLineNumberArea::CLineNumberArea(QTextEdit *editor) : QWidget(editor) {
     codeEditor = editor;
@@ -9,9 +9,9 @@ CLineNumberArea::CLineNumberArea(QTextEdit *editor) : QWidget(editor) {
 }
 
 QSize CLineNumberArea::sizeHint() const {
-    return QSize(((CTextEditHighlighter *)codeEditor)->lineNumberAreaWidth(), 0);
+    return QSize(((CSingleEditor *)codeEditor)->lineNumberAreaWidth(), 0);
 }
 
 void CLineNumberArea::paintEvent(QPaintEvent *event) {
-    ((CTextEditHighlighter *)codeEditor)->lineNumberAreaPaintEvent(event);
+    ((CSingleEditor *)codeEditor)->lineNumberAreaPaintEvent(event);
 }

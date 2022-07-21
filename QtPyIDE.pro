@@ -12,7 +12,7 @@ SOURCES += \
     editor/code_editor/code_editor.cpp \
     editor/code_editor/line_number_area.cpp \
     editor/code_editor/python_syntax_highlighter.cpp \
-    editor/code_editor/text_edit_highlighter.cpp \
+    editor/code_editor/single_editor.cpp \
     editor/console_view/console_view.cpp \
     editor/console_view/python_process.cpp \
     editor/console_view/single_console.cpp \
@@ -25,7 +25,7 @@ HEADERS += \
     editor/code_editor/code_editor.h \
     editor/code_editor/line_number_area.h \
     editor/code_editor/python_syntax_highlighter.h \
-    editor/code_editor/text_edit_highlighter.h \
+    editor/code_editor/single_editor.h \
     editor/console_view/console_view.h \
     editor/console_view/python_process.h \
     editor/console_view/single_console.h \

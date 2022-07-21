@@ -58,6 +58,7 @@ void CPythonProcess::ControlSyntax(QString Script)
 {
     qDebug()<<"Control happening";
     start(QString("python -m py_compile %1").arg(Script));
+    waitForFinished();
 }
 
 void CPythonProcess::ReadStdOut()

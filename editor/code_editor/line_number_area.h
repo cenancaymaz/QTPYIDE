@@ -1,7 +1,8 @@
 #ifndef CLINENUMBERAREA_H
 #define CLINENUMBERAREA_H
 
-#include <QtWidgets>
+#include <QWidget>
+#include <QTextEdit>
 
 class CLineNumberArea : public QWidget
 {

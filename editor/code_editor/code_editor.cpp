@@ -1,7 +1,5 @@
 #include "code_editor.h"
 
-#include <QBoxLayout>
-
 #include "../../startup_settings.h"
 
 
@@ -55,12 +53,12 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 //    }
 }
 
-CTextEditHighlighter *CCodeEditor::CreateAnEditor()
+CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
 {
     //Create an empty Editor
-    CTextEditHighlighter* p_text_edit = new CTextEditHighlighter(this);
+    CSingleEditor* p_text_edit = new CSingleEditor(this);
 
-    PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(p_text_edit->document());
+    PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(FileInfo, p_text_edit->document());
 
     mHighligtherVector.append(p_python_highlighter);
 
@@ -119,7 +117,7 @@ void CCodeEditor::EnableButtons(bool enable)
     pRunSelectedButton->setEnabled(enable);
 }
 
-CTextEditHighlighter *CCodeEditor::AddTab(QFileInfo FileInfo)
+CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
 {
     if(!FileInfo.fileName().isEmpty() || !FileInfo.fileName().isEmpty()){//if the tab created by selecting a file from file view
 
@@ -129,10 +127,10 @@ CTextEditHighlighter *CCodeEditor::AddTab(QFileInfo FileInfo)
         }
 
     }
-
+    //qDebug()<<FileInfo.filePath();
 
     //Create a tab
-    CTextEditHighlighter *tab = CreateAnEditor();
+    CSingleEditor *tab = CreateAnEditor(FileInfo);
 
     if(FileInfo.fileName().isEmpty()){//A new file that is created by user
         FileInfo.setFile(QString("File%1").arg(++LatestTabNo));
@@ -166,7 +164,7 @@ CTextEditHighlighter *CCodeEditor::AddTab(QFileInfo FileInfo)
     return tab;
 }
 
-void CCodeEditor::WriteFiletoTab(CTextEditHighlighter *Tab, QString Path)
+void CCodeEditor::WriteFiletoTab(CSingleEditor *Tab, QString Path)
 {
     QFile file(Path);
     if(file.open(QIODevice::ReadOnly)) {
@@ -187,7 +185,7 @@ void CCodeEditor::WriteFiletoTab(CTextEditHighlighter *Tab, QString Path)
 
 void CCodeEditor::OpenFile(QFileInfo FileInfo)
 {
-    CTextEditHighlighter* p_tab = AddTab(FileInfo);
+    CSingleEditor* p_tab = AddTab(FileInfo);
 
     if(p_tab){//A new tab is created
 
@@ -195,7 +193,7 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
         WriteFiletoTab(p_tab, FileInfo.filePath());
 
         //connect tab's text change to text change control slot
-        connect(p_tab, &CTextEditHighlighter::textChanged, this, &CCodeEditor::ControlTextChange);
+        connect(p_tab, &CSingleEditor::textChanged, this, &CCodeEditor::ControlTextChange);
 
 
     }else{//The tab is already created. Open this tab
@@ -226,7 +224,7 @@ void CCodeEditor::CloseTab()
     int closed_ind = pTabWidget->tabBar()->tabAt(p_tool_button->pos());
 
     //Take the tab
-    CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->widget(closed_ind));
+    CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->widget(closed_ind));
 
     //Remove tab from tab infos
     QString key = mTabInfos.key(p_tab);
@@ -234,6 +232,9 @@ void CCodeEditor::CloseTab()
 
     //Remove tab from tabwidget
     pTabWidget->removeTab(closed_ind);
+
+    //Delete the tab
+    delete p_tab;
 
     //set the current tab to prev tab from removed
     if(closed_ind > 0){
@@ -252,7 +253,7 @@ void CCodeEditor::CloseTab()
 void CCodeEditor::SaveFile()
 {
     //Take the selected tab
-    CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
+    CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
     //Find the path of the tab
     QString path = mTabInfos.key(p_tab);
@@ -336,7 +337,7 @@ void CCodeEditor::SaveAsFile()
             QTextStream stream(&file);
 
             //Take the selected tab
-            CTextEditHighlighter* p_tab = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
+            CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
             //Write text to the stream
             stream<< p_tab->toPlainText().toUtf8();
@@ -370,7 +371,7 @@ void CCodeEditor::SendInput()
     SaveFile();
 
     //Take selected tab
-    CTextEditHighlighter* p_text_edit = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
+    CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
     if(!p_text_edit){//There is no text edit in the tab widget
         return;
@@ -386,7 +387,7 @@ void CCodeEditor::SendInput()
 void CCodeEditor::SendSelected()
 {
     //Take selected tab
-    CTextEditHighlighter* p_text_edit = qobject_cast<CTextEditHighlighter*>(pTabWidget->currentWidget());
+    CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
     if(!p_text_edit){//There is no text edit in the tab widget
         return;

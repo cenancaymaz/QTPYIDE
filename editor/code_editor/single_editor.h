@@ -1,14 +1,14 @@
-#ifndef CTEXTEDITHIGHLIGHTER_H
-#define CTEXTEDITHIGHLIGHTER_H
+#ifndef CSINGLEEDITOR_H
+#define CSINGLEEDITOR_H
 
-#include <QtWidgets>
+#include <QTextEdit>
 
-class CTextEditHighlighter : public QTextEdit
+class CSingleEditor : public QTextEdit
 {
     Q_OBJECT
 public:
 
-    explicit CTextEditHighlighter(QWidget *parent = 0);
+    explicit CSingleEditor(QWidget *parent = 0);
 
     int getFirstVisibleBlockId();
     void lineNumberAreaPaintEvent(QPaintEvent *event);
@@ -27,13 +27,13 @@ private slots:
     void updateLineNumberArea(QRectF /*rect_f*/);
     void updateLineNumberArea(int /*slider_pos*/);
     void updateLineNumberArea();
-    void syntaxControl();
+
 
 private:
 
     QWidget *lineNumberArea;
-    QTimer* pSyntaxControlTimer;
+
 
 };
 
-#endif // CTEXTEDITHIGHLIGHTER_H
+#endif // CSINGLEEDITOR_H

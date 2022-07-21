@@ -1,11 +1,22 @@
 #include "python_syntax_highlighter.h"
 #include "qtextdocument.h"
 #include <QDebug>
+#include <QDir>
 #include "../../startup_settings.h"
+#include "../console_view/python_process.h"
 
-PythonSyntaxHighlighter::PythonSyntaxHighlighter(QTextDocument *parent)
+#include <windows.h>
+
+PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
+    mFileInfo = FileInfo;
+
+    pSyntaxControlTimer = new QTimer(this);
+    pSyntaxControlTimer->setInterval(3000);
+    connect(pSyntaxControlTimer, &QTimer::timeout, this, &PythonSyntaxHighlighter::SyntaxControl);
+    pSyntaxControlTimer->start();
+
 
     keywords = QStringList() << "and" << "assert" << "break" << "class" << "continue" << "def" <<
                                 "del" << "elif" << "else" << "except" << "exec" << "finally" <<
@@ -45,6 +56,11 @@ PythonSyntaxHighlighter::PythonSyntaxHighlighter(QTextDocument *parent)
     triDoubleQuote.setPattern("\"\"\"");
 
     initializeRules();
+}
+
+PythonSyntaxHighlighter::~PythonSyntaxHighlighter()
+{
+    DeleteSynFile(mFileInfo.dir().path() + "/syn_" + mFileInfo.fileName());
 }
 
 
@@ -178,5 +194,57 @@ const QTextCharFormat PythonSyntaxHighlighter::getTextCharFormat(const QString &
         charFormat.setFontWeight(QFont::Bold);
     if (style.contains("italic", Qt::CaseInsensitive))
         charFormat.setFontItalic(true);
+
     return charFormat;
+}
+
+void PythonSyntaxHighlighter::SyntaxControl()
+{
+    //Create syn-file path
+    QString syn_file_path = mFileInfo.dir().path() + "/syn_" + mFileInfo.fileName();
+
+    qDebug()<<syn_file_path;
+
+    //Create syn-file
+    CreateSynFile(syn_file_path);
+
+    //Control syn-file syntax
+    CPythonProcess* p_python_process = new CPythonProcess(this);
+    p_python_process->ControlSyntax(syn_file_path);
+
+    delete p_python_process;
+}
+
+void PythonSyntaxHighlighter::CreateSynFile(QString FilePath)
+{
+    QTextDocument* p_text_document = qobject_cast<QTextDocument*>(parent());
+
+
+    QFile file(FilePath);
+
+    if(file.open(QIODevice::ReadWrite)) {
+
+        //clear the contents of the file
+        file.resize(0);
+
+        //Create a text stream
+        QTextStream stream(&file);
+
+//        //Take the selected tab
+//        CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
+
+//        //Write text to the stream
+//        stream<< p_tab->toPlainText().toUtf8();
+        stream<< p_text_document->toPlainText().toUtf8();
+        //close the file
+        file.close();
+
+    }
+    SetFileAttributesA(FilePath.toStdString().c_str(), FILE_ATTRIBUTE_HIDDEN);
+}
+
+void PythonSyntaxHighlighter::DeleteSynFile(QString FilePath)
+{
+    QFile file(FilePath);
+    file.remove();
 }

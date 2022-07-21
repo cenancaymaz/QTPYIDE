@@ -1,10 +1,10 @@
 #ifndef CTEXTEDITOR_H
 #define CTEXTEDITOR_H
 
-#include <QtWidgets>
 #include "python_syntax_highlighter.h"
-#include "text_edit_highlighter.h"
+#include "single_editor.h"
 
+#include <QtWidgets>
 class CCodeEditor : public QFrame
 {
     Q_OBJECT
@@ -16,7 +16,7 @@ private:
     int LatestTabNo;
 
     QTabWidget* pTabWidget;
-    CTextEditHighlighter *CreateAnEditor();
+    CSingleEditor *CreateAnEditor(QFileInfo FileInfo);
 
     QPushButton* pSaveButton;
     void CreateSaveButton();
@@ -30,11 +30,11 @@ private:
     void EnableButtons(bool enable = true);
 
 
-    QMap<QString, CTextEditHighlighter*> mTabInfos;// Path or Designeted name for new file - Tab
+    QMap<QString, CSingleEditor*> mTabInfos;// Path or Designeted name for new file - Tab
     QVector<PythonSyntaxHighlighter*> mHighligtherVector; //it is here just for clearing the false positive meamory leak warning
-    CTextEditHighlighter* AddTab(QFileInfo FileInfo = QFileInfo());
+    CSingleEditor* AddTab(QFileInfo FileInfo = QFileInfo());
 
-    void WriteFiletoTab(CTextEditHighlighter* Tab, QString Path);
+    void WriteFiletoTab(CSingleEditor* Tab, QString Path);
 
 public slots:
 

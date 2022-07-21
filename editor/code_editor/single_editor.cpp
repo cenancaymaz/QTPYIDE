@@ -1,17 +1,14 @@
-#include "text_edit_highlighter.h"
+#include "single_editor.h"
 
 #include "../../startup_settings.h"
 #include "line_number_area.h"
 
+#include <QtWidgets>
 
-#include "../console_view/python_process.h"
 
-CTextEditHighlighter::CTextEditHighlighter(QWidget *parent) :
+CSingleEditor::CSingleEditor(QWidget *parent) :
     QTextEdit(parent)
 {
-    pSyntaxControlTimer = new QTimer(this);
-    pSyntaxControlTimer->setInterval(3000);
-    connect(pSyntaxControlTimer, &QTimer::timeout, this, &CTextEditHighlighter::syntaxControl);
 
     // Line numbers
     lineNumberArea = new CLineNumberArea(this);
@@ -24,7 +21,7 @@ CTextEditHighlighter::CTextEditHighlighter(QWidget *parent) :
     updateLineNumberAreaWidth(0);
 }
 
-int CTextEditHighlighter::lineNumberAreaWidth()
+int CSingleEditor::lineNumberAreaWidth()
 {
     int digits = 1;
     int max = qMax(1, this->document()->blockCount());
@@ -38,23 +35,23 @@ int CTextEditHighlighter::lineNumberAreaWidth()
     return space;
 }
 
-void CTextEditHighlighter::updateLineNumberAreaWidth(int /* newBlockCount */)
+void CSingleEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
 
-void CTextEditHighlighter::updateLineNumberArea(QRectF /*rect_f*/)
+void CSingleEditor::updateLineNumberArea(QRectF /*rect_f*/)
 {
-    CTextEditHighlighter::updateLineNumberArea();
+    CSingleEditor::updateLineNumberArea();
 }
-void CTextEditHighlighter::updateLineNumberArea(int /*slider_pos*/)
+void CSingleEditor::updateLineNumberArea(int /*slider_pos*/)
 {
-    CTextEditHighlighter::updateLineNumberArea();
+    CSingleEditor::updateLineNumberArea();
 }
-void CTextEditHighlighter::updateLineNumberArea()
+void CSingleEditor::updateLineNumberArea()
 {
-    pSyntaxControlTimer->start();
+
     /*
      * When the signal is emitted, the sliderPosition has been adjusted according to the action,
      * but the value has not yet been propagated (meaning the valueChanged() signal was not yet emitted),
@@ -94,19 +91,8 @@ void CTextEditHighlighter::updateLineNumberArea()
 
 }
 
-void CTextEditHighlighter::syntaxControl()
-{
-    CPythonProcess* p_python_process = new CPythonProcess(this);
 
-    p_python_process->ControlSyntax("main.py");
-
-    //p_python_process->deleteLater();
-    //delete p_python_process;
-
-}
-
-
-void CTextEditHighlighter::resizeEvent(QResizeEvent *e)
+void CSingleEditor::resizeEvent(QResizeEvent *e)
 {
     QTextEdit::resizeEvent(e);
 
@@ -115,7 +101,7 @@ void CTextEditHighlighter::resizeEvent(QResizeEvent *e)
 }
 
 
-int CTextEditHighlighter::getFirstVisibleBlockId()
+int CSingleEditor::getFirstVisibleBlockId()
 {
     // Detect the first block for which bounding rect - once translated
     // in absolute coordinated - is contained by the editor's text area
@@ -143,7 +129,7 @@ int CTextEditHighlighter::getFirstVisibleBlockId()
     return 0;
 }
 
-void CTextEditHighlighter::lineNumberAreaPaintEvent(QPaintEvent *event)
+void CSingleEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     CStartupSettings* p_set = GetStartupSettings();
 

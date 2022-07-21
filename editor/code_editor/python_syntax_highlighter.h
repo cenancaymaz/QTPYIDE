@@ -3,7 +3,8 @@
 
 
 #include <QSyntaxHighlighter>
-#include <QTextEdit>
+#include <QTimer>
+#include <QFileInfo>
 
 //! Container to describe a highlighting rule. Based on a regular expression, a relevant match # and the format.
 class HighlightingRule
@@ -27,7 +28,8 @@ class PythonSyntaxHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 public:
-    PythonSyntaxHighlighter(QTextDocument *parent);
+    PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocument *parent);
+    ~PythonSyntaxHighlighter();
 protected:
     void highlightBlock(const QString &text);
 private:
@@ -46,6 +48,14 @@ private:
     QList<HighlightingRule> rules;
     QRegExp triSingleQuote;
     QRegExp triDoubleQuote;
+
+
+    QTimer* pSyntaxControlTimer;
+    QFileInfo mFileInfo;
+private slots:
+    void SyntaxControl();
+    void CreateSynFile(QString FilePath);
+    void DeleteSynFile(QString FilePath);
 };
 
 #endif

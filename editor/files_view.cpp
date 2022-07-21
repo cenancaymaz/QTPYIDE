@@ -63,7 +63,7 @@ void CFilesView::CreateTree()
 
     //Give a name filter to model an set the filtered out hidden
     QStringList name_filters;
-    name_filters << "*.py";
+    name_filters <<"*.py";
     pModel->setNameFilters(name_filters);
     pModel->setNameFilterDisables(false);
 
