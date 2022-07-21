@@ -2,7 +2,7 @@
 
 #include <QtWidgets>
 
-#include "../startup_settings.h"
+#include "../../startup_settings.h"
 
 CConsoleView::CConsoleView(QWidget *parent)
     : QFrame{parent}

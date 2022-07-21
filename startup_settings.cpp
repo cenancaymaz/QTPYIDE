@@ -60,8 +60,6 @@ CStartupSettings::CStartupSettings(QObject *parent)
         mColors.insert(16, "#6c71c4");//violet --
         mColors.insert(17, "#d33682");//magenta --
         mColors.insert(18, "#eba0a0");//red select
-
-//mColors.insert(18, "#eb817f");//red select
     }
 
 }
