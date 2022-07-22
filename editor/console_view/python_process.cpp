@@ -1,6 +1,5 @@
 #include "python_process.h"
 
-#include <QDebug>
 #include <QTimer>
 #include <QThread>
 
@@ -56,88 +55,24 @@ void CPythonProcess::WriteInp(QString Inp)
 
 void CPythonProcess::ControlSyntax(QString Script)
 {
-    qDebug()<<"Control happening";
     start(QString("python -m py_compile %1").arg(Script));
     waitForFinished();
 }
 
 void CPythonProcess::ReadStdOut()
 {
-    QString line;
     //for reading std out line by line
     setReadChannel(QProcess::StandardOutput);
     while(canReadLine()){
-        line = readLine().trimmed();
-        qDebug()<<"Std Out: "<<line;
-        emit OnStdOut(line);
-        //emit OnStdOut(readLine().trimmed());
+        emit OnStdOut(readLine().trimmed());
     }
 }
 
 void CPythonProcess::ReadErrOut()
 {
-    QString line;
     //for reading std err line by line
     setReadChannel(QProcess::StandardError);
     while(canReadLine()){
-        line = readLine().trimmed();
-        //qDebug()<<"Std Err: "<<line;
-        emit OnErrOut(line);
-        //emit OnErrOut(readLine().trimmed());
+        emit OnErrOut(readLine().trimmed());
     }
-}
-
-void CPythonProcess::Deneme()
-{
-    qDebug()<<"deneme";
-
-//    this->write("python.exe\r\n");
-//    this->waitForBytesWritten();
-//    this->closeWriteChannel();
-
-
-
-//    this->write("a = 5\r\n");
-//    this->waitForBytesWritten();
-//    this->closeWriteChannel();
-
-//    QThread::msleep(500);
-
-    //this->setProcessChannelMode(QProcess::MergedChannels);
-
-
-//    this->write("python \n");
-//    this->waitForBytesWritten();
-//    qDebug()<<"deneme2";
-
-      WriteInp("print_hi('world')");
-//    WriteInp("print (\"sad\")");
-//    qDebug()<<"deneme2";
-//    WriteInp("print (\"dad\")");
-//    qDebug()<<"deneme3";
-//    WriteInp("a = 5");
-//    qDebug()<<"deneme4";
-//    WriteInp("a");
-//    qDebug()<<"deneme5";
-//    WriteInp("ads");
-//    qDebug()<<"deneme6";
-//    WriteInp("print(a)");
-//    qDebug()<<"deneme7";
-
-
-
-//    this->write("print (\"sad\") \n");
-//    this->waitForBytesWritten();
-//    //this->closeWriteChannel();
-//    qDebug()<<"deneme3";
-
-
-//    this->write("print (\"dad\") \n");
-//    this->waitForBytesWritten();
-//    qDebug()<<"deneme4";
-
-    //this->waitForReadyRead(-1);
-
-    //qDebug()<<this->readAll();
-
 }

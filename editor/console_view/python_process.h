@@ -23,8 +23,6 @@ private slots:
 
     void ReadErrOut();
 
-    void Deneme();
-
 signals:
 
     void OnStdOut(QString);

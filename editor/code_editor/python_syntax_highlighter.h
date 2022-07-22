@@ -5,6 +5,7 @@
 #include <QSyntaxHighlighter>
 #include <QTimer>
 #include <QFileInfo>
+#include <QTextDocument>
 
 //! Container to describe a highlighting rule. Based on a regular expression, a relevant match # and the format.
 class HighlightingRule
@@ -33,6 +34,8 @@ public:
 protected:
     void highlightBlock(const QString &text);
 private:
+    QTextDocument *pDoc;
+
     QStringList keywords;
     QStringList operators;
     QStringList braces;
@@ -49,19 +52,28 @@ private:
     QRegExp triSingleQuote;
     QRegExp triDoubleQuote;
 
-
-    QTimer* pSyntaxControlTimer;
     QFileInfo mFileInfo;
     QStringList mSyntaxControlReply;
-    void HighlightError(int LineNo);
-    void ClearErrorHighlights();
+
+    QTimer* pSyntaxControlTimer;
+    int LastPos;
+    int LastRem;
+    int LastAdd;
+    bool isConCh;
+
 private slots:
+
     void SyntaxControl();
     void SyntaxControlReceive(QString ReplyLine);
-    void SyntaxControlFinished();
 
     void CreateSynFile(QString FilePath);
     void DeleteSynFile(QString FilePath);
+
+    void SaveLastContentChange(int position, int charsRemoved, int charsAdded);
+
+
+
+
 };
 
 #endif

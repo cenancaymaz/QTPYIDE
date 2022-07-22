@@ -42,7 +42,7 @@ public slots:
 
 private slots:
 
-    void ControlTextChange();
+    void ControlContentChange();
     void CloseTab();
 
     void SaveFile();

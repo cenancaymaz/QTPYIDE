@@ -9,6 +9,7 @@
 CSingleEditor::CSingleEditor(QWidget *parent) :
     QTextEdit(parent)
 {
+    connect(this, &CSingleEditor::textChanged, this, &CSingleEditor::ControlContentChange);
 
     // Line numbers
     lineNumberArea = new CLineNumberArea(this);
@@ -19,6 +20,12 @@ CSingleEditor::CSingleEditor(QWidget *parent) :
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(updateLineNumberArea()));
     ///
     updateLineNumberAreaWidth(0);
+}
+
+void CSingleEditor::SetCurrentContent(QString Content)
+{
+    setText(Content);
+    mCurrentContent = Content;
 }
 
 int CSingleEditor::lineNumberAreaWidth()
@@ -98,6 +105,18 @@ void CSingleEditor::resizeEvent(QResizeEvent *e)
 
     QRect cr = this->contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+}
+
+void CSingleEditor::ControlContentChange()
+{
+    QString new_content = toPlainText();
+
+    if(new_content != mCurrentContent){
+
+        emit ContentChanged();
+
+        mCurrentContent = new_content;
+    }
 }
 
 

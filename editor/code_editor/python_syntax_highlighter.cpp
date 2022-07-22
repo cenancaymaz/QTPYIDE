@@ -1,7 +1,7 @@
 #include "python_syntax_highlighter.h"
-#include "qtextdocument.h"
 #include <QDebug>
 #include <QDir>
+
 #include "../../startup_settings.h"
 #include "../console_view/python_process.h"
 
@@ -12,13 +12,23 @@
 PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
-    mFileInfo = FileInfo;
+    pDoc = qobject_cast<QTextDocument*>(parent);
+
+    connect(pDoc, &QTextDocument::contentsChange, this, &PythonSyntaxHighlighter::SaveLastContentChange);
+
+    LastPos = 0;
+    LastRem = 0;
+    LastAdd = 0;
+    isConCh = false;
+
 
     pSyntaxControlTimer = new QTimer(this);
     pSyntaxControlTimer->setInterval(3000);
     connect(pSyntaxControlTimer, &QTimer::timeout, this, &PythonSyntaxHighlighter::SyntaxControl);
     pSyntaxControlTimer->start();
 
+
+    mFileInfo = FileInfo;
 
     keywords = QStringList() << "and" << "assert" << "break" << "class" << "continue" << "def" <<
                                 "del" << "elif" << "else" << "except" << "exec" << "finally" <<
@@ -141,6 +151,36 @@ void PythonSyntaxHighlighter::highlightBlock(const QString &text)
     bool isInMultilne = matchMultiline(text, triSingleQuote, 1, basicStyles.value("string2"));
     if (!isInMultilne)
         matchMultiline(text, triDoubleQuote, 2, basicStyles.value("string2"));
+
+
+    QTextCharFormat char_format;
+    char_format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    char_format.setUnderlineColor(QColor(255,0,0));
+    char_format.setFontUnderline(true);
+
+    //SyntaxControl();
+
+    if(!mSyntaxControlReply.isEmpty()){
+
+        qDebug()<<"There is error:";
+
+        QString err_str = mSyntaxControlReply.join("\n");
+
+        qDebug().noquote()<<err_str;
+
+        qDebug()<<"Text: "<<text;
+
+
+        if (mSyntaxControlReply[1].toUtf8() == text) {
+
+            // The following line does not work !
+            char_format.setToolTip("Hasan");
+
+
+            qDebug()<<"Error catched!";
+            setFormat(0, text.length(), char_format);
+        }
+    }
 }
 
 bool PythonSyntaxHighlighter::matchMultiline(const QString &text, const QRegExp &delimiter, const int inState, const QTextCharFormat &style)
@@ -200,45 +240,6 @@ const QTextCharFormat PythonSyntaxHighlighter::getTextCharFormat(const QString &
     return charFormat;
 }
 
-void PythonSyntaxHighlighter::HighlightError(int LineNo)
-{
-    //First clear all previous errors
-    ClearErrorHighlights();
-
-    //Take a cursor
-    QTextDocument *p_doc = qobject_cast<QTextDocument*>(parent());
-    QTextCursor curs = QTextCursor(p_doc);
-
-    //Move the cursor to the line position and select the line
-    curs.movePosition(QTextCursor::Start);
-    curs.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, LineNo - 1);
-    curs.select(QTextCursor::LineUnderCursor);
-
-    //Create textcharformat for error indication
-    QTextCharFormat char_format;
-    char_format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
-    char_format.setUnderlineColor(QColor(255,0,0));
-    char_format.setFontUnderline(true);
-
-    //set textcharformat to the line
-    curs.setCharFormat(char_format);
-}
-
-void PythonSyntaxHighlighter::ClearErrorHighlights()
-{
-    //Take a cursor
-    QTextDocument *p_doc = qobject_cast<QTextDocument*>(parent());
-    QTextCursor curs = QTextCursor(p_doc);
-
-    curs.select(QTextCursor::Document);
-
-    //Create textcharformat for error indication
-    QTextCharFormat char_format;
-    char_format.setFontUnderline(false);
-
-    //set textcharformat to the line
-    curs.setCharFormat(char_format);
-}
 
 void PythonSyntaxHighlighter::SyntaxControl()
 {
@@ -255,10 +256,13 @@ void PythonSyntaxHighlighter::SyntaxControl()
     CPythonProcess* p_python_process = new CPythonProcess(this);
     //Connect process reply to reply receiving
     connect(p_python_process, &CPythonProcess::OnErrOut, this, &PythonSyntaxHighlighter::SyntaxControlReceive);
-    //Connect process finish for reply processing
-    //There is a problem with finished signal so you have to do casting
-    connect(p_python_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &PythonSyntaxHighlighter::SyntaxControlFinished); //Start syntax control
     p_python_process->ControlSyntax(syn_file_path);
+
+    //pDoc = qobject_cast<QTextDocument*>(parent());
+
+    if(isConCh){
+        pDoc->contentsChange(LastPos, LastRem, LastAdd);
+    }
 
 
     delete p_python_process;
@@ -269,28 +273,10 @@ void PythonSyntaxHighlighter::SyntaxControlReceive(QString ReplyLine)
     mSyntaxControlReply.append(ReplyLine);
 }
 
-void PythonSyntaxHighlighter::SyntaxControlFinished()
-{
-    if(!mSyntaxControlReply.isEmpty()){
-
-        HighlightError(mSyntaxControlReply[0].right(1).toInt());
-
-        qDebug()<<"Error:";
-        foreach(QString line, mSyntaxControlReply){
-
-            qDebug()<<line;
-        }
-
-    }else{
-
-        ClearErrorHighlights();
-
-    }
-}
 
 void PythonSyntaxHighlighter::CreateSynFile(QString FilePath)
 {
-    QTextDocument* p_text_document = qobject_cast<QTextDocument*>(parent());
+    //QTextDocument* p_text_document = qobject_cast<QTextDocument*>(parent());
 
 
     QFile file(FilePath);
@@ -304,7 +290,7 @@ void PythonSyntaxHighlighter::CreateSynFile(QString FilePath)
         QTextStream stream(&file);
 
         //Save original file editor text to syn-file
-        stream<< p_text_document->toPlainText().toUtf8();
+        stream<< pDoc->toPlainText().toUtf8();
         //close the file
         file.close();
 
@@ -321,3 +307,13 @@ void PythonSyntaxHighlighter::DeleteSynFile(QString FilePath)
     QFile file(FilePath);
     file.remove();
 }
+
+void PythonSyntaxHighlighter::SaveLastContentChange(int position, int charsRemoved, int charsAdded)
+{
+    LastPos = position;
+    LastRem = charsRemoved;
+    LastAdd = charsAdded;
+    isConCh = true;
+}
+
+

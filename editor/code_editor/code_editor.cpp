@@ -165,7 +165,8 @@ void CCodeEditor::WriteFiletoTab(CSingleEditor *Tab, QString Path)
         QTextStream stream(&file);
         QString data = stream.readAll();
 
-        Tab->setText(data.toUtf8());
+        Tab->SetCurrentContent(data.toUtf8());
+        //Tab->setText(data.toUtf8());
         file.close();
 
     }else{
@@ -185,8 +186,8 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
         //Write text from the file to the tab
         WriteFiletoTab(p_tab, FileInfo.filePath());
 
-        //connect tab's text change to text change control slot
-        connect(p_tab, &CSingleEditor::textChanged, this, &CCodeEditor::ControlTextChange);
+        //connect tab's content change to content change control slot
+        connect(p_tab, &CSingleEditor::ContentChanged, this, &CCodeEditor::ControlContentChange);
 
 
     }else{//The tab is already created. Open this tab
@@ -195,7 +196,7 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
     }
 }
 
-void CCodeEditor::ControlTextChange()
+void CCodeEditor::ControlContentChange()
 {
     //Take the current tabs name
     QString name = pTabWidget->tabText(pTabWidget->currentIndex());
