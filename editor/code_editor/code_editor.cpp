@@ -43,14 +43,6 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
     vl->addLayout(gl);
 
-
-//    //This code is to test newly created tabs.
-//    QTextEdit* p_tab = AddTab();
-//    if(p_tab){//A new tab is created
-
-//        //connect tab's text change to text change control slot
-//        connect(p_tab, &QTextEdit::textChanged, this, &CCodeEditor::ControlTextChange);
-//    }
 }
 
 CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
@@ -61,6 +53,7 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
     PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(FileInfo, p_text_edit->document());
 
     mHighligtherVector.append(p_python_highlighter);
+
 
     return p_text_edit;
 }

@@ -5,7 +5,9 @@
 #include "../../startup_settings.h"
 #include "../console_view/python_process.h"
 
-#include <windows.h>
+#ifdef Q_OS_WIN
+    #include <windows.h>
+#endif
 
 PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocument *parent)
     : QSyntaxHighlighter(parent)
@@ -198,21 +200,92 @@ const QTextCharFormat PythonSyntaxHighlighter::getTextCharFormat(const QString &
     return charFormat;
 }
 
+void PythonSyntaxHighlighter::HighlightError(int LineNo)
+{
+    //First clear all previous errors
+    ClearErrorHighlights();
+
+    //Take a cursor
+    QTextDocument *p_doc = qobject_cast<QTextDocument*>(parent());
+    QTextCursor curs = QTextCursor(p_doc);
+
+    //Move the cursor to the line position and select the line
+    curs.movePosition(QTextCursor::Start);
+    curs.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, LineNo - 1);
+    curs.select(QTextCursor::LineUnderCursor);
+
+    //Create textcharformat for error indication
+    QTextCharFormat char_format;
+    char_format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    char_format.setUnderlineColor(QColor(255,0,0));
+    char_format.setFontUnderline(true);
+
+    //set textcharformat to the line
+    curs.setCharFormat(char_format);
+}
+
+void PythonSyntaxHighlighter::ClearErrorHighlights()
+{
+    //Take a cursor
+    QTextDocument *p_doc = qobject_cast<QTextDocument*>(parent());
+    QTextCursor curs = QTextCursor(p_doc);
+
+    curs.select(QTextCursor::Document);
+
+    //Create textcharformat for error indication
+    QTextCharFormat char_format;
+    char_format.setFontUnderline(false);
+
+    //set textcharformat to the line
+    curs.setCharFormat(char_format);
+}
+
 void PythonSyntaxHighlighter::SyntaxControl()
 {
     //Create syn-file path
     QString syn_file_path = mFileInfo.dir().path() + "/syn_" + mFileInfo.fileName();
 
-    qDebug()<<syn_file_path;
-
     //Create syn-file
     CreateSynFile(syn_file_path);
 
     //Control syn-file syntax
+    //Clear reply
+    mSyntaxControlReply.clear();
+    //Create process
     CPythonProcess* p_python_process = new CPythonProcess(this);
+    //Connect process reply to reply receiving
+    connect(p_python_process, &CPythonProcess::OnErrOut, this, &PythonSyntaxHighlighter::SyntaxControlReceive);
+    //Connect process finish for reply processing
+    //There is a problem with finished signal so you have to do casting
+    connect(p_python_process, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &PythonSyntaxHighlighter::SyntaxControlFinished); //Start syntax control
     p_python_process->ControlSyntax(syn_file_path);
 
+
     delete p_python_process;
+}
+
+void PythonSyntaxHighlighter::SyntaxControlReceive(QString ReplyLine)
+{
+    mSyntaxControlReply.append(ReplyLine);
+}
+
+void PythonSyntaxHighlighter::SyntaxControlFinished()
+{
+    if(!mSyntaxControlReply.isEmpty()){
+
+        HighlightError(mSyntaxControlReply[0].right(1).toInt());
+
+        qDebug()<<"Error:";
+        foreach(QString line, mSyntaxControlReply){
+
+            qDebug()<<line;
+        }
+
+    }else{
+
+        ClearErrorHighlights();
+
+    }
 }
 
 void PythonSyntaxHighlighter::CreateSynFile(QString FilePath)
@@ -230,17 +303,17 @@ void PythonSyntaxHighlighter::CreateSynFile(QString FilePath)
         //Create a text stream
         QTextStream stream(&file);
 
-//        //Take the selected tab
-//        CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
-
-//        //Write text to the stream
-//        stream<< p_tab->toPlainText().toUtf8();
+        //Save original file editor text to syn-file
         stream<< p_text_document->toPlainText().toUtf8();
         //close the file
         file.close();
 
     }
-    SetFileAttributesA(FilePath.toStdString().c_str(), FILE_ATTRIBUTE_HIDDEN);
+
+    //set syn-file as hidden
+    #ifdef Q_OS_WIN
+        SetFileAttributesA(FilePath.toStdString().c_str(), FILE_ATTRIBUTE_HIDDEN);
+    #endif
 }
 
 void PythonSyntaxHighlighter::DeleteSynFile(QString FilePath)

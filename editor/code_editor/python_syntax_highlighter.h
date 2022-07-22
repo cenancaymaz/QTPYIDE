@@ -52,8 +52,14 @@ private:
 
     QTimer* pSyntaxControlTimer;
     QFileInfo mFileInfo;
+    QStringList mSyntaxControlReply;
+    void HighlightError(int LineNo);
+    void ClearErrorHighlights();
 private slots:
     void SyntaxControl();
+    void SyntaxControlReceive(QString ReplyLine);
+    void SyntaxControlFinished();
+
     void CreateSynFile(QString FilePath);
     void DeleteSynFile(QString FilePath);
 };

@@ -81,8 +81,8 @@ void CPythonProcess::ReadErrOut()
     setReadChannel(QProcess::StandardError);
     while(canReadLine()){
         line = readLine().trimmed();
-        qDebug()<<"Std Out: "<<line;
-        emit OnStdOut(line);
+        //qDebug()<<"Std Err: "<<line;
+        emit OnErrOut(line);
         //emit OnErrOut(readLine().trimmed());
     }
 }
