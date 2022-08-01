@@ -9,6 +9,9 @@
 CSingleEditor::CSingleEditor(QWidget *parent) :
     QTextEdit(parent)
 {
+    mTextFound = false;
+    mSearchedText = "";
+
     connect(this, &CSingleEditor::textChanged, this, &CSingleEditor::ControlContentChange);
 
     // Line numbers
@@ -40,6 +43,61 @@ int CSingleEditor::lineNumberAreaWidth()
     int space = 13 +  fontMetrics().width(QLatin1Char('9')) * (digits);
 
     return space;
+}
+
+void CSingleEditor::FindNext(QString Text)
+{
+    if(Text != mSearchedText){ //A new search is started
+
+        mSearchedText = Text;
+        mTextFound = false;
+    }
+    //Find the text
+    if(find(Text)){
+
+        mTextFound = true;
+
+    }else{//not found
+
+        if(mTextFound){//it has previously found, but not now
+            //return cursor to the start of the document and search again
+            QTextCursor cursor = textCursor();
+            cursor.movePosition(QTextCursor::Start);
+            setTextCursor(cursor);
+            FindNext(Text);
+
+        }else{
+            //it has never be found. Do nothing
+        }
+    }
+
+}
+
+void CSingleEditor::FindPrev(QString Text)
+{
+    if(Text != mSearchedText){ //A new search is started
+
+        mSearchedText = Text;
+        mTextFound = false;
+    }
+    //Find the text
+    if(find(Text, QTextDocument::FindBackward)){
+
+        mTextFound = true;
+
+    }else{//not found
+
+        if(mTextFound){//it has previously found, but not now
+            //return cursor to the start of the document and search again
+            QTextCursor cursor = textCursor();
+            cursor.movePosition(QTextCursor::End);
+            setTextCursor(cursor);
+            FindPrev(Text);
+
+        }else{
+            //it has never be found. Do nothing
+        }
+    }
 }
 
 void CSingleEditor::updateLineNumberAreaWidth(int /* newBlockCount */)

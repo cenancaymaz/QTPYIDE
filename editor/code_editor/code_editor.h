@@ -18,6 +18,12 @@ private:
     QTabWidget* pTabWidget;
     CSingleEditor *CreateAnEditor(QFileInfo FileInfo);
 
+    QFrame* pFindWidget;
+    QLineEdit* pFindEdit;
+    QPushButton* pFindPrevButton;
+    QPushButton* pFindNextButton;
+    void CreateFindWidget();
+
     QPushButton* pSaveButton;
     void CreateSaveButton();
     QPushButton* pSaveAsButton;
@@ -44,6 +50,9 @@ private slots:
 
     void ControlContentChange();
     void CloseTab();
+
+    void FindPrevButtonClicked();
+    void FindNextButtonClicked();
 
     void SaveFile();
     void SaveAsFile();

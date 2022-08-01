@@ -15,9 +15,9 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     pTabWidget->setMovable(true);
 
     p_set->SettoDefaultFontSize(pTabWidget);
-
-
     LatestTabNo = 0;
+
+    CreateFindWidget();
 
     CreateSaveButton();
     CreateSaveAsButton();
@@ -34,6 +34,7 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     setLayout(vl);
 
     vl->addWidget(pTabWidget);
+    vl->addWidget(pFindWidget);
 
     gl->addWidget(pSaveButton, 0, 0);
     gl->addWidget(pSaveAsButton, 0, 1);
@@ -56,6 +57,36 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
 
 
     return p_text_edit;
+}
+
+void CCodeEditor::CreateFindWidget()
+{
+    CStartupSettings* p_set = GetStartupSettings();
+
+    pFindWidget = new QFrame(this);
+    pFindWidget->setObjectName("FindWidget");
+    pFindWidget->setStyleSheet(QString("QFrame#FindWidget{ border: 1px solid %1; }").arg(p_set->mColors[10]));
+
+
+    QLabel* p_label = new QLabel(tr("Find:"), pFindWidget);
+    pFindEdit = new QLineEdit(pFindWidget);
+    pFindPrevButton = new QPushButton(tr("<Prev"), pFindWidget);
+    connect(pFindPrevButton, &QPushButton::clicked, this, &CCodeEditor::FindPrevButtonClicked);
+    pFindNextButton = new QPushButton(tr("Next>"), pFindWidget);
+    connect(pFindNextButton, &QPushButton::clicked, this, &CCodeEditor::FindNextButtonClicked);
+
+    p_set->SettoDefaultFontSize(p_label);
+    p_set->SettoDefaultFontSize(pFindEdit);
+    p_set->SettoDefaultFontSize(pFindPrevButton);
+    p_set->SettoDefaultFontSize(pFindNextButton);
+
+    QHBoxLayout* hl = new QHBoxLayout(pFindWidget);
+
+    hl->addWidget(p_label);
+    hl->addWidget(pFindEdit);
+    hl->addWidget(pFindPrevButton);
+    hl->addWidget(pFindNextButton);
+
 }
 
 void CCodeEditor::CreateSaveButton()
@@ -242,6 +273,22 @@ void CCodeEditor::CloseTab()
         EnableButtons(false);
     }
 
+}
+
+void CCodeEditor::FindPrevButtonClicked()
+{
+    //Take selected tab
+    CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
+
+    p_text_edit->FindPrev(pFindEdit->text());
+}
+
+void CCodeEditor::FindNextButtonClicked()
+{
+    //Take selected tab
+    CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
+
+    p_text_edit->FindNext(pFindEdit->text());
 }
 
 void CCodeEditor::SaveFile()

@@ -15,6 +15,9 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 
+    void FindNext(QString Text);
+    void FindPrev(QString Text);
+
 signals:
 
     void ContentChanged();
@@ -37,6 +40,9 @@ private:
 
     QWidget *lineNumberArea;
     QString mCurrentContent;
+
+    bool mTextFound;
+    QString mSearchedText;
 
 
 };
