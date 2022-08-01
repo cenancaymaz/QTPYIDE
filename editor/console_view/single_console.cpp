@@ -17,9 +17,9 @@ CSingleConsole::CSingleConsole(QWidget *parent)
     InsertInputInd();
 }
 
-void CSingleConsole::StartProcess(QString Script)
+void CSingleConsole::StartProcess(QString Path, QString Script)
 {
-    pPythonProcess->StartProcess(Script);
+    pPythonProcess->StartProcess(Path, Script);
 }
 
 void CSingleConsole::WriteInput(QString Inp)

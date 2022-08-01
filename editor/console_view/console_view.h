@@ -8,9 +8,11 @@ class CConsoleView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit CConsoleView(QWidget *parent = nullptr);
+    explicit CConsoleView(QString InitialPath, QWidget *parent = nullptr);
 
 private:
+
+    QString mWorkingPath;
 
     int LatestTabNo;
 
@@ -26,11 +28,11 @@ public slots:
 
     void WriteInput(QString text);
 
+    void WorkingPathChanged(QString Path);
+
 private slots:
 
     void AddEmptyTab();
-
-    void AddScriptTab();
 
     CSingleConsole* AddTab();
 

@@ -72,7 +72,12 @@ PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocume
 
 PythonSyntaxHighlighter::~PythonSyntaxHighlighter()
 {
+    //syn_hello.cpython-310.pyc
+    //Delete temporary script file
     DeleteSynFile(mFileInfo.dir().path() + "/syn_" + mFileInfo.fileName());
+    //Delete temporary compiled file
+    //Python version control will be added
+    DeleteSynFile(mFileInfo.dir().path() + "/__pycache__/syn_" + mFileInfo.fileName().remove(".py") + ".cpython-310.pyc");
 }
 
 

@@ -1,5 +1,5 @@
 #include "python_process.h"
-
+#include <QDebug>
 #include <QTimer>
 #include <QThread>
 
@@ -24,13 +24,16 @@ CPythonProcess::~CPythonProcess()
     waitForFinished();
 }
 
-void CPythonProcess::StartProcess(QString Script)
+void CPythonProcess::StartProcess(QString Path, QString Script)
 {
     //This opens a python terminal. Inputs are from stdin and outputs are from stdout and stderr
     //If there is a script in here, firstly the script is run then terminal resumes
     //-i is for forcing prompts after script
     //-q is for clearing interactive startup
-    start(QString("python -i -q %1").arg(Script));
+
+    qDebug()<<Path;
+    setWorkingDirectory(Path);
+    start(QString("python -i -q %2").arg(Script));
 }
 
 void CPythonProcess::WriteInp(QString Inp)

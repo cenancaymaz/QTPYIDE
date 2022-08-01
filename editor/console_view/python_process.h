@@ -11,7 +11,7 @@ public:
 
     ~CPythonProcess();
 
-    void StartProcess(QString Script = "");
+    void StartProcess(QString Path, QString Script = "");
 
     void WriteInp(QString Inp);
 

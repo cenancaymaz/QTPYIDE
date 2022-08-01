@@ -10,7 +10,7 @@ class CSingleConsole : public QTextEdit
 public:
     explicit CSingleConsole(QWidget *parent = nullptr);
 
-    void StartProcess(QString Script = "");
+    void StartProcess(QString Path, QString Script = "");
 
     void WriteInput(QString Inp);
 

@@ -34,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QDockWidget *dock3 = new QDockWidget(tr("Console"),this);
     dock3->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-    pOutputView = new CConsoleView(dock3);
+    pOutputView = new CConsoleView(pFilesView->GetWorkingPath(), dock3);
+    connect(pFilesView, &CFilesView::WorkingPathChanged, pOutputView, &CConsoleView::WorkingPathChanged);
     dock3->setWidget(pOutputView);
     dock3->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     addDockWidget(Qt::BottomDockWidgetArea, dock3, Qt::Vertical);

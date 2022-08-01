@@ -9,13 +9,15 @@ class CFilesView : public QFrame
 public:
     explicit CFilesView(QWidget *parent = nullptr);
 
+    QString GetWorkingPath();
+
 private:
 
-    QString mCurrentPath;
-    QString mCurrentDir;
+    QString mWorkingPath;
+    QString mWorkingDir;
 
-    QPushButton *pCurrentDirButton;
-    void CreateCurrentDirButton();
+    QPushButton *pWorkingDirButton;
+    void CreateWorkingDirButton();
 
     QTreeView *pTree;
     QFileSystemModel *pModel;
@@ -33,7 +35,7 @@ private:
 
 private slots:
 
-    void OnCurrentDirButtonClicked();
+    void OnWorkingDirButtonClicked();
 
     void TreeDoubleClicked(const QModelIndex &index);
     void OnCustomContextMenu(const QPoint &point);
@@ -46,6 +48,8 @@ private slots:
 signals:
 
     void FileSelected(QFileInfo FileInfo);
+    void WorkingPathChanged(QString Path);
+
 
 };
 

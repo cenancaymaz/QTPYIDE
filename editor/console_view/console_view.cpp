@@ -7,9 +7,12 @@
 
 #include "python_process.h"
 
-CConsoleView::CConsoleView(QWidget *parent)
+CConsoleView::CConsoleView(QString InitialPath, QWidget *parent)
     : QFrame{parent}
 {
+
+    mWorkingPath = InitialPath;
+
     CStartupSettings* p_set = GetStartupSettings();
 
     setStyleSheet(QString("CConsoleView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
@@ -81,16 +84,17 @@ void CConsoleView::WriteInput(QString text)
 
 }
 
+void CConsoleView::WorkingPathChanged(QString Path)
+{
+    mWorkingPath = Path;
+}
+
 void CConsoleView::AddEmptyTab()
 {
     CSingleConsole* p_single_console = AddTab();
-    p_single_console->StartProcess();
+    p_single_console->StartProcess(mWorkingPath);
 }
 
-void CConsoleView::AddScriptTab()
-{
-
-}
 
 QTextEdit *CConsoleView::CreateAConsole()
 {
@@ -106,6 +110,9 @@ CSingleConsole *CConsoleView::AddTab()
     CSingleConsole *p_console = new CSingleConsole(this);
     QString tabName = QString("Console%1").arg(++LatestTabNo);
     pTabWidget->insertTab(pTabWidget->count() - 1, p_console, tabName);
+
+    //Insert tab tool tip to the tab
+    pTabWidget->setTabToolTip(pTabWidget->count() - 2, "Working Dir: " + mWorkingPath);
 
     //For Close Button
     QToolButton *cb = new QToolButton();

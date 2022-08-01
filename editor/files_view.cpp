@@ -9,8 +9,9 @@ CFilesView::CFilesView(QWidget *parent)
     setStyleSheet(QString("CFilesView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
     //Initial dir
-    mCurrentPath = QDir::currentPath();
-    mCurrentDir = QDir::current().dirName();
+    mWorkingPath = QDir::currentPath();
+    mWorkingDir = QDir::current().dirName();
+
 
     //For setting the font of the Frame
 
@@ -20,35 +21,40 @@ CFilesView::CFilesView(QWidget *parent)
 //    font.setPointSize(9);
 //    this->setFont(font);
 
-    QLabel* p_label = new QLabel("Current Dir: ", this);
+    QLabel* p_label = new QLabel("Working Dir: ", this);
     p_set->SettoDefaultFontSize(p_label);
     QFont label_font = p_label->font();
     label_font.setBold(true);
     p_label->setFont(label_font);
 
-    CreateCurrentDirButton();
+    CreateWorkingDirButton();
     CreateTree();
 
     QVBoxLayout* vl = new QVBoxLayout(this);
     QHBoxLayout* hl = new QHBoxLayout();
     hl->addWidget(p_label);
-    hl->addWidget(pCurrentDirButton);
+    hl->addWidget(pWorkingDirButton);
     hl->addStretch(1);
     vl->addLayout(hl);
     vl->addWidget(pTree);
 
 }
 
-void CFilesView::CreateCurrentDirButton()
+QString CFilesView::GetWorkingPath()
 {
-    pCurrentDirButton = new QPushButton(this);
-    pCurrentDirButton->setFont(this->font());
+    return mWorkingPath;
+}
 
-    connect(pCurrentDirButton, &QPushButton::clicked, this, &CFilesView::OnCurrentDirButtonClicked);
+void CFilesView::CreateWorkingDirButton()
+{
+    pWorkingDirButton = new QPushButton(this);
+    pWorkingDirButton->setFont(this->font());
+
+    connect(pWorkingDirButton, &QPushButton::clicked, this, &CFilesView::OnWorkingDirButtonClicked);
 
     //For first opening
-    pCurrentDirButton->setText(mCurrentDir);
-    pCurrentDirButton->setToolTip(mCurrentPath);
+    pWorkingDirButton->setText(mWorkingDir);
+    pWorkingDirButton->setToolTip(mWorkingPath);
 
 }
 
@@ -58,7 +64,7 @@ void CFilesView::CreateTree()
 
     //Create Model
     pModel = new QFileSystemModel(this);
-    pModel->setRootPath(mCurrentPath);
+    pModel->setRootPath(mWorkingPath);
     pModel->setFilter(QDir::AllDirs | QDir::AllEntries |QDir::NoDotAndDotDot);
 
     //Give a name filter to model an set the filtered out hidden
@@ -70,7 +76,7 @@ void CFilesView::CreateTree()
 
     pTree->setModel(pModel);
     //Path of the root of tree view
-    pTree->setRootIndex(pModel->index(mCurrentPath));
+    pTree->setRootIndex(pModel->index(mWorkingPath));
 
     //Hide size and type collumns
     pTree->hideColumn(1);
@@ -129,23 +135,25 @@ void CFilesView::BuildContextMenu()
 
 }
 
-void CFilesView::OnCurrentDirButtonClicked()
+void CFilesView::OnWorkingDirButtonClicked()
 {
     //Select the new directory
-    QString path = QFileDialog::getExistingDirectory(this, tr("Choose a directory."), mCurrentPath, QFileDialog::ShowDirsOnly);
+    QString path = QFileDialog::getExistingDirectory(this, tr("Choose a directory."), mWorkingPath, QFileDialog::ShowDirsOnly);
 
     if(path.isEmpty()) return; //Directory is not selected
 
-    mCurrentPath = path;
-    mCurrentDir = QDir(mCurrentPath).dirName();
+    mWorkingPath = path;
+    mWorkingDir = QDir(mWorkingPath).dirName();
+
+    emit WorkingPathChanged(mWorkingPath);
 
     //Set current dir button
-    pCurrentDirButton->setText(mCurrentDir);
-    pCurrentDirButton->setToolTip(mCurrentPath);
+    pWorkingDirButton->setText(mWorkingDir);
+    pWorkingDirButton->setToolTip(mWorkingPath);
 
     //Set tree to selected path
-    pModel->setRootPath(mCurrentPath);
-    pTree->setRootIndex(pModel->index(mCurrentPath));
+    pModel->setRootPath(mWorkingPath);
+    pTree->setRootIndex(pModel->index(mWorkingPath));
 
 }
 
