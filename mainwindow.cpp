@@ -9,6 +9,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    qDebug()<<"git deneme";
     SetAppTheme();
 
     setDockNestingEnabled(true);
