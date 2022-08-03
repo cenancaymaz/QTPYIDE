@@ -17,7 +17,7 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     p_set->SettoDefaultFontSize(pTabWidget);
     LatestTabNo = 0;
 
-    CreateFindWidget();
+    CreateSearchWidget();
 
     CreateSaveButton();
     CreateSaveAsButton();
@@ -34,7 +34,7 @@ CCodeEditor::CCodeEditor(QWidget *parent)
     setLayout(vl);
 
     vl->addWidget(pTabWidget);
-    vl->addWidget(pFindWidget);
+    vl->addWidget(pSearchWidget);
 
     gl->addWidget(pSaveButton, 0, 0);
     gl->addWidget(pSaveAsButton, 0, 1);
@@ -51,7 +51,11 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
     //Create an empty Editor
     CSingleEditor* p_text_edit = new CSingleEditor(this);
 
+    //Create Python highligter and bound it to the Single editor
     PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(FileInfo, p_text_edit->document());
+
+    //Add CTRL-F funcionality
+    connect(p_text_edit, &CSingleEditor::OpenSearchWidget, this, &CCodeEditor::OpenSearchWidget);
 
     mHighligtherVector.append(p_python_highlighter);
 
@@ -59,33 +63,70 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
     return p_text_edit;
 }
 
-void CCodeEditor::CreateFindWidget()
+void CCodeEditor::CreateSearchWidget()
 {
     CStartupSettings* p_set = GetStartupSettings();
 
-    pFindWidget = new QFrame(this);
-    pFindWidget->setObjectName("FindWidget");
-    pFindWidget->setStyleSheet(QString("QFrame#FindWidget{ border: 1px solid %1; }").arg(p_set->mColors[10]));
+    //Create the search widget and set its border
+    pSearchWidget = new QFrame(this);
+    pSearchWidget->setObjectName("SearchWidget");
+    pSearchWidget->setStyleSheet(QString("QFrame#SearchWidget{ border: 1px solid %1; }").arg(p_set->mColors[10]));
+
+    //Create a search button stylesheet
+    QString sty = QString("QPushButton{"
+                              "border: 4px solid %1;"
+                          "}"
+                          "QPushButton:hover {"
+                              "background-color: %2;"
+                              "border: 4px solid %2;"
+                          "}"
+                          "QPushButton:pressed {"
+                              "background-color: %3;"
+                              "border: 4px solid %3;"
+                          "}").arg(p_set->mColors[19], p_set->mColors[20], p_set->mColors[21]);
 
 
-    QLabel* p_label = new QLabel(tr("Find:"), pFindWidget);
-    pFindEdit = new QLineEdit(pFindWidget);
-    pFindPrevButton = new QPushButton(tr("<Prev"), pFindWidget);
+    //Create the label
+    QLabel* p_label = new QLabel(tr("Find:"), pSearchWidget);
+
+    //Create search edit and connect its enter press signal to find next
+    pSearchEdit = new QLineEdit(pSearchWidget);
+    connect(pSearchEdit, &QLineEdit::returnPressed, this, &CCodeEditor::FindNextButtonClicked);
+
+    //Crete find prev button, set its stylesheet and connect its clicked signal to find prev
+    pFindPrevButton = new QPushButton(tr("Find Previous  "), pSearchWidget);
+    pFindPrevButton->setStyleSheet(sty);
     connect(pFindPrevButton, &QPushButton::clicked, this, &CCodeEditor::FindPrevButtonClicked);
-    pFindNextButton = new QPushButton(tr("Next>"), pFindWidget);
+
+    //Crete find next button, set its stylesheet and connect its clicked signal to find next
+    pFindNextButton = new QPushButton(tr("Find Next  "), pSearchWidget);
+    pFindNextButton->setStyleSheet(sty);
     connect(pFindNextButton, &QPushButton::clicked, this, &CCodeEditor::FindNextButtonClicked);
 
+    //Crete cancel search button, set its stylesheet and connect its clicked signal to slot that used for closing(setting invis) of the search widget
+    pCancelSearchButton = new QPushButton(" x ", pSearchWidget);
+    pCancelSearchButton->setStyleSheet(sty);
+    connect(pCancelSearchButton, &QPushButton::clicked, this, &CCodeEditor::CancelSearchButtonClicked);
+
+    //Set fonts of the buttons to default font size
     p_set->SettoDefaultFontSize(p_label);
-    p_set->SettoDefaultFontSize(pFindEdit);
+    p_set->SettoDefaultFontSize(pSearchEdit);
     p_set->SettoDefaultFontSize(pFindPrevButton);
     p_set->SettoDefaultFontSize(pFindNextButton);
 
-    QHBoxLayout* hl = new QHBoxLayout(pFindWidget);
+    QHBoxLayout* hl = new QHBoxLayout(pSearchWidget);
 
     hl->addWidget(p_label);
-    hl->addWidget(pFindEdit);
+    hl->addWidget(pSearchEdit, 6); //This is for bigger search box
     hl->addWidget(pFindPrevButton);
     hl->addWidget(pFindNextButton);
+
+    hl->addStretch(1);
+    hl->addWidget(pCancelSearchButton);
+
+
+    //Start with invisible Search Widget
+    pSearchWidget->setVisible(false);
 
 }
 
@@ -227,6 +268,16 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
     }
 }
 
+void CCodeEditor::OpenSearchWidget(QString SelectedText)
+{
+    //Open search widget
+    pSearchWidget->setVisible(true);
+    //Set the text of searched to the selected text
+    pSearchEdit->setText(SelectedText);
+    //Focus on search edit
+    pSearchEdit->setFocus();
+}
+
 void CCodeEditor::ControlContentChange()
 {
     //Take the current tabs name
@@ -280,7 +331,9 @@ void CCodeEditor::FindPrevButtonClicked()
     //Take selected tab
     CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
-    p_text_edit->FindPrev(pFindEdit->text());
+    if(p_text_edit){//Control wether or not there is an editor is shown
+        p_text_edit->FindPrev(pSearchEdit->text());
+    }
 }
 
 void CCodeEditor::FindNextButtonClicked()
@@ -288,7 +341,14 @@ void CCodeEditor::FindNextButtonClicked()
     //Take selected tab
     CSingleEditor* p_text_edit = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
 
-    p_text_edit->FindNext(pFindEdit->text());
+    if(p_text_edit){//Control wether or not there is an editor is shown
+        p_text_edit->FindNext(pSearchEdit->text());
+    }
+}
+
+void CCodeEditor::CancelSearchButtonClicked()
+{
+    pSearchWidget->setVisible(false);
 }
 
 void CCodeEditor::SaveFile()

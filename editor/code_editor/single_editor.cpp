@@ -156,6 +156,58 @@ void CSingleEditor::updateLineNumberArea()
 
 }
 
+void CSingleEditor::keyPressEvent(QKeyEvent *e)
+{
+    //Capture CTRL-F for search widget
+    if (e->key() == Qt::Key_F && (QApplication::keyboardModifiers() & Qt::ControlModifier))
+    {
+        emit OpenSearchWidget(textCursor().selectedText());
+    }
+
+    QTextEdit::keyPressEvent(e);
+}
+
+void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
+{
+    CStartupSettings* p_set = GetStartupSettings();
+
+    //Take the standart menu
+    QMenu* p_menu = createStandardContextMenu(e->pos());
+    //Create a custom style for the menu
+    QString menu_style = QString(
+            "QMenu::item{"
+                "color: %1;"
+                "font: 15px;"
+                "padding: 2px 25px 2px 20px;"
+                "border: 1px solid transparent;"
+            "}"
+            "QMenu::item:disabled{"
+                "color: %2;"
+                "font: 15px;"
+
+            "}"
+            "QMenu::item:selected {"
+                "border-color: %3;"
+                "background: %3;"
+            "}"
+        ).arg(p_set->mColors[5], p_set->mColors[1], p_set->mColors[18]);
+
+    p_menu->setStyleSheet(menu_style);
+
+    //Create find action
+    QAction* p_find_action = p_menu->addAction(tr("&Find"));
+    p_find_action->setShortcuts({QKeySequence("Ctrl+F")});
+
+    //Execute the menuand control wether or not is find action
+    if(p_find_action == p_menu->exec(e->globalPos())){
+
+        emit OpenSearchWidget(textCursor().selectedText());
+    }
+
+    delete p_find_action;
+    delete p_menu;
+}
+
 
 void CSingleEditor::resizeEvent(QResizeEvent *e)
 {

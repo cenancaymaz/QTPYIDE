@@ -16,7 +16,7 @@ CStartupSettings::CStartupSettings(QObject *parent)
         }
     #endif
 
-    mColors = QVector<QString>(19,"");
+    mColors = QVector<QString>(22,"");
 
     if(mIsDarkMode){
         //Dark solarized
@@ -39,6 +39,11 @@ CStartupSettings::CStartupSettings(QObject *parent)
         mColors.insert(16, "#6c71c4");//violet
         mColors.insert(17, "#d33682");//magenta
         mColors.insert(18, "#dc322f");//red select
+
+        //borderless button colors
+        mColors.insert(19, "#073642");//base02 - backround color
+        mColors.insert(20, "#1c4954");//base02/light - hover color
+        mColors.insert(21, "#dc322f");//base03 - press color
     }else{
         //Light solarized
         mColors.insert(0, "#eee8d5");//base2--
@@ -60,6 +65,11 @@ CStartupSettings::CStartupSettings(QObject *parent)
         mColors.insert(16, "#6c71c4");//violet --
         mColors.insert(17, "#d33682");//magenta --
         mColors.insert(18, "#eba0a0");//red select
+
+        //borderless button colors
+        mColors.insert(19, "#eee8d5");//base2 - backround color
+        mColors.insert(20, "#fbf6e8");//base2/light - hover color
+        mColors.insert(21, "#eba0a0");//base03 - press color
     }
 
 }

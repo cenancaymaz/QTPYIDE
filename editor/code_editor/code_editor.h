@@ -18,11 +18,12 @@ private:
     QTabWidget* pTabWidget;
     CSingleEditor *CreateAnEditor(QFileInfo FileInfo);
 
-    QFrame* pFindWidget;
-    QLineEdit* pFindEdit;
+    QFrame* pSearchWidget;
+    QLineEdit* pSearchEdit;
     QPushButton* pFindPrevButton;
     QPushButton* pFindNextButton;
-    void CreateFindWidget();
+    QPushButton* pCancelSearchButton;
+    void CreateSearchWidget();
 
     QPushButton* pSaveButton;
     void CreateSaveButton();
@@ -45,6 +46,7 @@ private:
 public slots:
 
     void OpenFile(QFileInfo FileInfo);
+    void OpenSearchWidget(QString SelectedText);
 
 private slots:
 
@@ -53,6 +55,7 @@ private slots:
 
     void FindPrevButtonClicked();
     void FindNextButtonClicked();
+    void CancelSearchButtonClicked();
 
     void SaveFile();
     void SaveAsFile();

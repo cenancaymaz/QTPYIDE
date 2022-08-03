@@ -2,6 +2,7 @@
 #define CSINGLEEDITOR_H
 
 #include <QTextEdit>
+#include <QPlainTextEdit>
 
 class CSingleEditor : public QTextEdit
 {
@@ -21,6 +22,7 @@ public:
 signals:
 
     void ContentChanged();
+    void OpenSearchWidget(QString SelectedText);
 
 public slots:
     void resizeEvent(QResizeEvent *e);
@@ -43,6 +45,10 @@ private:
 
     bool mTextFound;
     QString mSearchedText;
+
+    void keyPressEvent(QKeyEvent *e);
+    void contextMenuEvent(QContextMenuEvent *e);
+
 
 
 };
