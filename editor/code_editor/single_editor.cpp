@@ -7,7 +7,7 @@
 
 
 CSingleEditor::CSingleEditor(QWidget *parent) :
-    QTextEdit(parent)
+    QPlainTextEdit(parent)
 {
     mTextFound = false;
     mSearchedText = "";
@@ -27,7 +27,8 @@ CSingleEditor::CSingleEditor(QWidget *parent) :
 
 void CSingleEditor::SetCurrentContent(QString Content)
 {
-    setText(Content);
+    setPlainText(Content);
+    //setText(Content);
     mCurrentContent = Content;
 }
 
@@ -164,7 +165,7 @@ void CSingleEditor::keyPressEvent(QKeyEvent *e)
         emit OpenSearchWidget(textCursor().selectedText());
     }
 
-    QTextEdit::keyPressEvent(e);
+    QPlainTextEdit::keyPressEvent(e);
 }
 
 void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
@@ -211,7 +212,7 @@ void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
 
 void CSingleEditor::resizeEvent(QResizeEvent *e)
 {
-    QTextEdit::resizeEvent(e);
+    QPlainTextEdit::resizeEvent(e);
 
     QRect cr = this->contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));

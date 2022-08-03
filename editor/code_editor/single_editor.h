@@ -4,7 +4,7 @@
 #include <QTextEdit>
 #include <QPlainTextEdit>
 
-class CSingleEditor : public QTextEdit
+class CSingleEditor : public QPlainTextEdit
 {
     Q_OBJECT
 public:

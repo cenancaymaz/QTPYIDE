@@ -3,13 +3,14 @@
 
 #include <QWidget>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 
 class CLineNumberArea : public QWidget
 {
     Q_OBJECT
 
     public:
-        CLineNumberArea(QTextEdit *editor);
+        CLineNumberArea(QPlainTextEdit *editor);
 
         QSize sizeHint() const;
 
@@ -17,7 +18,7 @@ class CLineNumberArea : public QWidget
         void paintEvent(QPaintEvent *event);
 
     private:
-        QTextEdit *codeEditor;
+        QPlainTextEdit *codeEditor;
 
 };
 

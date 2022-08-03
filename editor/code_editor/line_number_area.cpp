@@ -2,7 +2,7 @@
 
 #include "single_editor.h"
 
-CLineNumberArea::CLineNumberArea(QTextEdit *editor) : QWidget(editor) {
+CLineNumberArea::CLineNumberArea(QPlainTextEdit *editor) : QWidget(editor) {
     codeEditor = editor;
 
 
