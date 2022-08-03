@@ -46,8 +46,10 @@ private:
     bool mTextFound;
     QString mSearchedText;
 
+    //Events
     void keyPressEvent(QKeyEvent *e);
     void contextMenuEvent(QContextMenuEvent *e);
+    void wheelEvent(QWheelEvent *e);
 
 
 

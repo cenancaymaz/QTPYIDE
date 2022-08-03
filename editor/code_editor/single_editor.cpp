@@ -118,6 +118,7 @@ void CSingleEditor::updateLineNumberArea(int /*slider_pos*/)
 void CSingleEditor::updateLineNumberArea()
 {
 
+    qDebug()<<"Update";
     /*
      * When the signal is emitted, the sliderPosition has been adjusted according to the action,
      * but the value has not yet been propagated (meaning the valueChanged() signal was not yet emitted),
@@ -145,6 +146,10 @@ void CSingleEditor::updateLineNumberArea()
     int first_block_id = getFirstVisibleBlockId();
     if (first_block_id == 0 || this->textCursor().block().blockNumber() == first_block_id-1)
         this->verticalScrollBar()->setSliderPosition(dy-this->document()->documentMargin());
+
+    QFont font = lineNumberArea->font();
+    font.setPointSize(this->font().pointSize());
+    lineNumberArea->setFont(font);
 
 //    // Snap to first line (TODO...)
 //    if (first_block_id > 0)
@@ -207,6 +212,21 @@ void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
 
     delete p_find_action;
     delete p_menu;
+}
+
+void CSingleEditor::wheelEvent(QWheelEvent *e)
+{
+    if (e->modifiers() & Qt::ControlModifier) {
+        const int delta = e->delta();
+        if (delta < 0)
+            zoomOut();
+        else if (delta > 0)
+            zoomIn();
+
+        updateLineNumberArea();
+        return;
+    }
+    QPlainTextEdit::wheelEvent(e);
 }
 
 
