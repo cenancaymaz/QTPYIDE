@@ -51,6 +51,9 @@ void CCodeManager::CreateSaveButton()
     QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeManager::SaveFile);
 
     pSaveButton->setToolTip(tr("Save - Ctrl+S"));
+
+    pSaveButton->setFixedSize(this->height() - 6, this->height() - 6);
+    pSaveButton->setIconSize(QSize(pSaveButton->width() - 1, pSaveButton->height() - 1));
 }
 
 void CCodeManager::CreateSaveAsButton()
@@ -62,6 +65,8 @@ void CCodeManager::CreateSaveAsButton()
     QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeManager::SaveAsFile);
 
     pSaveAsButton->setToolTip(tr("Save As - Ctrl+Shift+S"));
+    pSaveAsButton->setFixedSize(this->height() - 6, this->height() - 6);
+    pSaveAsButton->setIconSize(QSize(pSaveAsButton->width() - 1, pSaveAsButton->height() - 1));
 }
 
 void CCodeManager::CreateRunSelectedButton()
@@ -73,6 +78,9 @@ void CCodeManager::CreateRunSelectedButton()
     QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeManager::SendSelected);
 
     pRunSelectedButton->setToolTip(tr("Run Selected - F9"));
+    pRunSelectedButton->setFixedSize(this->height() - 6, this->height() - 6);
+    pRunSelectedButton->setIconSize(QSize(pRunSelectedButton->width() - 1, pRunSelectedButton->height() - 1));
+
 }
 
 void CCodeManager::CreateRunButton()
@@ -84,6 +92,8 @@ void CCodeManager::CreateRunButton()
     QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeManager::SendInput);
 
     pRunButton->setToolTip(tr("Run - Ctrl+R"));
+    pRunButton->setFixedSize(this->height() - 6, this->height() - 6);
+    pRunButton->setIconSize(QSize(pRunButton->width() - 1, pRunButton->height() - 1));
 }
 
 void CCodeManager::EnableButtons(bool enable)
