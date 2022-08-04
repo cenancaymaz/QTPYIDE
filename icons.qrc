@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="run-selected-icon">rsc/icons/run selected.png</file>
+        <file alias="run-icon">rsc/icons/run.png</file>
+        <file alias="save-icon">rsc/icons/save.png</file>
+        <file alias="save-as-icon">rsc/icons/save-as.png</file>
+    </qresource>
+</RCC>

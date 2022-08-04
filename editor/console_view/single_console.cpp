@@ -1,5 +1,5 @@
 #include "single_console.h"
-#include "../../startup_settings.h"
+#include "../../util/startup_settings.h"
 
 CSingleConsole::CSingleConsole(QWidget *parent)
     : QTextEdit{parent}

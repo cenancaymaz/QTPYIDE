@@ -1,5 +1,5 @@
 #include "files_view.h"
-#include "../startup_settings.h"
+#include "../../util/startup_settings.h"
 
 CFilesView::CFilesView(QWidget *parent)
     : QFrame{parent}
@@ -31,6 +31,7 @@ CFilesView::CFilesView(QWidget *parent)
     CreateTree();
 
     QVBoxLayout* vl = new QVBoxLayout(this);
+    vl->setContentsMargins(3, 3, 3, 3);
     QHBoxLayout* hl = new QHBoxLayout();
     hl->addWidget(p_label);
     hl->addWidget(pWorkingDirButton);

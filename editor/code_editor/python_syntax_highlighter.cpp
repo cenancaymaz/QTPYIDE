@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QDir>
 
-#include "../../startup_settings.h"
+#include "../../util/startup_settings.h"
 #include "../console_view/python_process.h"
 
 #ifdef Q_OS_WIN

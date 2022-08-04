@@ -2,7 +2,7 @@
 
 #include <QtWidgets>
 
-#include "../../startup_settings.h"
+#include "../../util/startup_settings.h"
 
 
 #include "python_process.h"
@@ -56,6 +56,7 @@ CConsoleView::CConsoleView(QString InitialPath, QWidget *parent)
 
 
     QVBoxLayout *vl = new QVBoxLayout(this);
+    vl->setContentsMargins(3, 3, 3, 3);
     vl->addWidget(pTabWidget);
 
     QHBoxLayout* hl = new QHBoxLayout();

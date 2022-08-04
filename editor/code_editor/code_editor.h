@@ -1,6 +1,7 @@
 #ifndef CTEXTEDITOR_H
 #define CTEXTEDITOR_H
 
+#include "../../util/borderless_button.h"
 #include "python_syntax_highlighter.h"
 #include "single_editor.h"
 
@@ -20,22 +21,10 @@ private:
 
     QFrame* pSearchWidget;
     QLineEdit* pSearchEdit;
-    QPushButton* pFindPrevButton;
-    QPushButton* pFindNextButton;
-    QPushButton* pCancelSearchButton;
+    CBorderlessButton* pFindPrevButton;
+    CBorderlessButton* pFindNextButton;
+    CBorderlessButton* pCancelSearchButton;
     void CreateSearchWidget();
-
-    QPushButton* pSaveButton;
-    void CreateSaveButton();
-    QPushButton* pSaveAsButton;
-    void CreateSaveAsButton();
-    QPushButton* pRunButton;
-    void CreateRunButton();
-    QPushButton* pRunSelectedButton;
-    void CreateRunSelectedButton();
-
-    void EnableButtons(bool enable = true);
-
 
     QMap<QString, CSingleEditor*> mTabInfos;// Path or Designeted name for new file - Tab
     QVector<PythonSyntaxHighlighter*> mHighligtherVector; //it is here just for clearing the false positive meamory leak warning
@@ -48,6 +37,11 @@ public slots:
     void OpenFile(QFileInfo FileInfo);
     void OpenSearchWidget(QString SelectedText);
 
+    void SaveFile();
+    void SaveAsFile();
+    void SendInput();
+    void SendSelected();
+
 private slots:
 
     void ControlContentChange();
@@ -57,13 +51,9 @@ private slots:
     void FindNextButtonClicked();
     void CancelSearchButtonClicked();
 
-    void SaveFile();
-    void SaveAsFile();
-    void SendInput();
-    void SendSelected();
-
 signals:
     void InputEntered(QString text);
+    void EnableButtons(bool enable);
 
 };
 

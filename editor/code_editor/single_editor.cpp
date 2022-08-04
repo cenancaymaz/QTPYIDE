@@ -1,6 +1,6 @@
 #include "single_editor.h"
 
-#include "../../startup_settings.h"
+#include "../../util/startup_settings.h"
 #include "line_number_area.h"
 
 #include <QtWidgets>

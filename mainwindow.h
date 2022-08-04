@@ -3,9 +3,10 @@
 
 #include <QMainWindow>
 
+#include "editor/code_manager/code_manager.h"
 #include "editor/console_view/console_view.h"
 #include "editor/code_editor/code_editor.h"
-#include "editor/files_view.h"
+#include "editor/files_view/files_view.h"
 
 class MainWindow : public QMainWindow
 {
@@ -19,6 +20,7 @@ public:
 
 private:
 
+    CCodeManager *pCodeManager;
     CConsoleView *pOutputView;
     CCodeEditor *pCodeEditor;
     CFilesView *pFilesView;

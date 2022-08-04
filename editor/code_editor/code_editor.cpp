@@ -1,6 +1,7 @@
 #include "code_editor.h"
 
-#include "../../startup_settings.h"
+#include "../../util/startup_settings.h"
+
 
 
 CCodeEditor::CCodeEditor(QWidget *parent)
@@ -19,30 +20,11 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
     CreateSearchWidget();
 
-    CreateSaveButton();
-    CreateSaveAsButton();
-    CreateRunButton();
-    CreateRunSelectedButton();
-
-    //Disable buttons in opening
-    EnableButtons(false);
-
-
-    QVBoxLayout *vl = new QVBoxLayout();
-    QGridLayout *gl = new QGridLayout();
-
-    setLayout(vl);
+    QVBoxLayout *vl = new QVBoxLayout(this);
+    vl->setContentsMargins(3, 3, 3, 3);
 
     vl->addWidget(pTabWidget);
     vl->addWidget(pSearchWidget);
-
-    gl->addWidget(pSaveButton, 0, 0);
-    gl->addWidget(pSaveAsButton, 0, 1);
-    gl->addWidget(pRunSelectedButton, 0, 2);
-    gl->addWidget(pRunButton, 0, 3);
-
-
-    vl->addLayout(gl);
 
 }
 
@@ -72,20 +54,6 @@ void CCodeEditor::CreateSearchWidget()
     pSearchWidget->setObjectName("SearchWidget");
     pSearchWidget->setStyleSheet(QString("QFrame#SearchWidget{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
-    //Create a search button stylesheet
-    QString sty = QString("QPushButton{"
-                              "border: 4px solid %1;"
-                          "}"
-                          "QPushButton:hover {"
-                              "background-color: %2;"
-                              "border: 4px solid %2;"
-                          "}"
-                          "QPushButton:pressed {"
-                              "background-color: %3;"
-                              "border: 4px solid %3;"
-                          "}").arg(p_set->mColors[19], p_set->mColors[20], p_set->mColors[21]);
-
-
     //Create the label
     QLabel* p_label = new QLabel(tr("Find:"), pSearchWidget);
 
@@ -93,28 +61,24 @@ void CCodeEditor::CreateSearchWidget()
     pSearchEdit = new QLineEdit(pSearchWidget);
     connect(pSearchEdit, &QLineEdit::returnPressed, this, &CCodeEditor::FindNextButtonClicked);
 
-    //Crete find prev button, set its stylesheet and connect its clicked signal to find prev
-    pFindPrevButton = new QPushButton(tr("Find Previous  "), pSearchWidget);
-    pFindPrevButton->setStyleSheet(sty);
-    connect(pFindPrevButton, &QPushButton::clicked, this, &CCodeEditor::FindPrevButtonClicked);
+    //Create find prev button and connect its clicked signal to find prev
+    pFindPrevButton = new CBorderlessButton(tr("Find Previous  "), pSearchWidget);
+    connect(pFindPrevButton, &CBorderlessButton::clicked, this, &CCodeEditor::FindPrevButtonClicked);
 
-    //Crete find next button, set its stylesheet and connect its clicked signal to find next
-    pFindNextButton = new QPushButton(tr("Find Next  "), pSearchWidget);
-    pFindNextButton->setStyleSheet(sty);
-    connect(pFindNextButton, &QPushButton::clicked, this, &CCodeEditor::FindNextButtonClicked);
+    //Create find next button and connect its clicked signal to find next
+    pFindNextButton = new CBorderlessButton(tr("Find Next  "), pSearchWidget);
+    connect(pFindNextButton, &CBorderlessButton::clicked, this, &CCodeEditor::FindNextButtonClicked);
 
-    //Crete cancel search button, set its stylesheet and connect its clicked signal to slot that used for closing(setting invis) of the search widget
-    pCancelSearchButton = new QPushButton(" x ", pSearchWidget);
-    pCancelSearchButton->setStyleSheet(sty);
-    connect(pCancelSearchButton, &QPushButton::clicked, this, &CCodeEditor::CancelSearchButtonClicked);
+    //Create cancel search button and connect its clicked signal to slot that used for closing(setting invis) of the search widget
+    pCancelSearchButton = new CBorderlessButton(" x ", pSearchWidget);
+    connect(pCancelSearchButton, &CBorderlessButton::clicked, this, &CCodeEditor::CancelSearchButtonClicked);
 
     //Set fonts of the buttons to default font size
     p_set->SettoDefaultFontSize(p_label);
-    p_set->SettoDefaultFontSize(pSearchEdit);
-    p_set->SettoDefaultFontSize(pFindPrevButton);
-    p_set->SettoDefaultFontSize(pFindNextButton);
+
 
     QHBoxLayout* hl = new QHBoxLayout(pSearchWidget);
+    hl->setContentsMargins(3, 3, 3, 3);
 
     hl->addWidget(p_label);
     hl->addWidget(pSearchEdit, 6); //This is for bigger search box
@@ -130,57 +94,6 @@ void CCodeEditor::CreateSearchWidget()
 
 }
 
-void CCodeEditor::CreateSaveButton()
-{
-    pSaveButton = new QPushButton(tr("Save"), this);
-    connect(pSaveButton, &QPushButton::clicked, this, &CCodeEditor::SaveFile);
-
-    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+S"), this);
-    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SaveFile);
-
-    pSaveButton->setToolTip(tr("Ctrl + S"));
-}
-
-void CCodeEditor::CreateSaveAsButton()
-{
-    pSaveAsButton = new QPushButton(tr("Save As"), this);
-    connect(pSaveAsButton, &QPushButton::clicked, this, &CCodeEditor::SaveAsFile);
-
-    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+Shift+S"), this);
-    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SaveAsFile);
-
-    pSaveAsButton->setToolTip(tr("Ctrl + Shift + S"));
-}
-
-void CCodeEditor::CreateRunButton()
-{
-    pRunButton = new QPushButton(tr("Run"), this);
-    connect(pRunButton, &QPushButton::clicked, this, &CCodeEditor::SendInput);
-
-    QShortcut *p_shortcut = new QShortcut(QKeySequence("Ctrl+R"), this);
-    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SendInput);
-
-    pRunButton->setToolTip(tr("Ctrl + R"));
-}
-
-void CCodeEditor::CreateRunSelectedButton()
-{
-    pRunSelectedButton = new QPushButton(tr("Run Selected"), this);
-    connect(pRunSelectedButton, &QPushButton::clicked, this, &CCodeEditor::SendSelected);
-
-    QShortcut *p_shortcut = new QShortcut(QKeySequence("F9"), this);
-    QObject::connect(p_shortcut, &QShortcut::activated, this, &CCodeEditor::SendSelected);
-
-    pRunSelectedButton->setToolTip(tr("F9"));
-}
-
-void CCodeEditor::EnableButtons(bool enable)
-{
-    pSaveButton->setEnabled(enable);
-    pSaveAsButton->setEnabled(enable);
-    pRunButton->setEnabled(enable);
-    pRunSelectedButton->setEnabled(enable);
-}
 
 CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
 {
@@ -224,7 +137,7 @@ CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
     mTabInfos.insert(FileInfo.filePath(), tab);
 
     //Enable buttons in case of buttons are disabled by no tab situation
-    EnableButtons(true);
+    emit EnableButtons(true);
 
     return tab;
 }
@@ -321,7 +234,7 @@ void CCodeEditor::CloseTab()
     //if there is no tab, disable buttons
     if(pTabWidget->count() == 0){
 
-        EnableButtons(false);
+        emit EnableButtons(false);
     }
 
 }

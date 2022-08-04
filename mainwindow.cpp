@@ -3,16 +3,25 @@
 #include <QtWidgets>
 #include <QDebug>
 
-#include "startup_settings.h"
+#include "util/startup_settings.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    qDebug()<<"git deneme";
     SetAppTheme();
 
     setDockNestingEnabled(true);
+
+
+    QDockWidget *dock0 = new QDockWidget(this);
+    dock0->setAllowedAreas(Qt::TopDockWidgetArea);
+    pCodeManager = new CCodeManager(dock0);
+    dock0->setWidget(pCodeManager);
+    dock0->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    addDockWidget(Qt::TopDockWidgetArea, dock0, Qt::Horizontal);
+    mDocks.insert(0, dock0);
+
 
     QDockWidget *dock1 = new QDockWidget(tr("Files"),this);
     dock1->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -20,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     dock1->setWidget(pFilesView);
     dock1->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     addDockWidget(Qt::LeftDockWidgetArea, dock1);
-    mDocks.insert(0, dock1);
+    mDocks.insert(1, dock1);
 
 
 
@@ -31,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     dock2->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     dock2->setTitleBarWidget(0);
     addDockWidget(Qt::RightDockWidgetArea, dock2);
-    mDocks.insert(1, dock2);
+    mDocks.insert(2, dock2);
 
     QDockWidget *dock3 = new QDockWidget(tr("Console"),this);
     dock3->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
@@ -40,9 +49,10 @@ MainWindow::MainWindow(QWidget *parent)
     dock3->setWidget(pOutputView);
     dock3->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     addDockWidget(Qt::BottomDockWidgetArea, dock3, Qt::Vertical);
-    mDocks.insert(2, dock3);
+    mDocks.insert(3, dock3);
 
 
+    //This had to be here, otherwise docking mechanism could not work properly
     QWidget* p_widget = new QWidget(this);
     p_widget->setFixedWidth(0);
     setCentralWidget(p_widget);
@@ -51,19 +61,32 @@ MainWindow::MainWindow(QWidget *parent)
     QDockWidget *dock4 = new QDockWidget(this);
     dock4->setAllowedAreas(Qt::BottomDockWidgetArea);
     QLabel* p_status = new QLabel("Status", dock4);
+    p_status->setFixedHeight(50);
     dock4->setWidget(p_status);
     dock4->setFeatures(QDockWidget::NoDockWidgetFeatures);
     addDockWidget(Qt::BottomDockWidgetArea, dock4, Qt::Vertical);
-    mDocks.insert(3, dock4);
+    mDocks.insert(4, dock4);
 
 
+    //connect code manager's buttons to the code editor
+    connect(pCodeManager, &CCodeManager::SaveFile, pCodeEditor, &CCodeEditor::SaveFile);
+    connect(pCodeManager, &CCodeManager::SaveAsFile, pCodeEditor, &CCodeEditor::SaveAsFile);
+    connect(pCodeManager, &CCodeManager::SendInput, pCodeEditor, &CCodeEditor::SendInput);
+    connect(pCodeManager, &CCodeManager::SendSelected, pCodeEditor, &CCodeEditor::SendSelected);
+
+    //connect code editor's button enabling situation to code manager
+    connect(pCodeEditor, &CCodeEditor::EnableButtons, pCodeManager, &CCodeManager::EnableButtons);
+
+    //connect input entered of code editor to console view's input running
     connect(pCodeEditor, &CCodeEditor::InputEntered, pOutputView, &CConsoleView::WriteInput);
+
+    //connect files view's file selection to the code editor
     connect(pFilesView, &CFilesView::FileSelected, pCodeEditor, &CCodeEditor::OpenFile);
 
     //This one is for startup dock sizes
     //Somehow, we can't use the event handler because if we use, we lost splitter of the docks.
     //Therefore, we use singleshot timer with lambda expression
-    QTimer::singleShot(400, this, [this]() {resizeDocks({this->mDocks[0], this->mDocks[1]}, {400, this->width() - 400}, Qt::Horizontal); } );
+    QTimer::singleShot(400, this, [this]() {resizeDocks({this->mDocks[1], this->mDocks[2]}, {400, this->width() - 400}, Qt::Horizontal); } );
 
 
 }
