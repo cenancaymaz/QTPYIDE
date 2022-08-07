@@ -18,7 +18,7 @@ CStartupSettings::CStartupSettings(QObject *parent)
 
     mColors = QVector<QString>(22,"");
 
-    if(!mIsDarkMode){
+    if(mIsDarkMode){
         //Dark solarized
         mColors.insert(0, "#073642");//base02
         mColors.insert(1, "#646464");//Disable color

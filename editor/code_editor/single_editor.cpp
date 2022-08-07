@@ -9,6 +9,8 @@
 CSingleEditor::CSingleEditor(QWidget *parent) :
     QPlainTextEdit(parent)
 {
+    setMouseTracking(true);
+
     mTextFound = false;
     mSearchedText = "";
 
@@ -99,6 +101,31 @@ void CSingleEditor::FindPrev(QString Text)
             //it has never be found. Do nothing
         }
     }
+}
+
+bool CSingleEditor::event(QEvent *event)
+{
+    if(event->type() == QEvent::ToolTip){
+
+        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+
+        QPoint pos = helpEvent->pos();
+        pos.setX(pos.x() - viewportMargins().left());
+        pos.setY(pos.y() - viewportMargins().top());
+        QTextCursor cursor = cursorForPosition(pos);
+
+        QVector<QTextLayout::FormatRange> fmts = cursor.block().layout()->formats();
+
+        foreach(QTextLayout::FormatRange fmt, fmts){
+
+            cursor.setPosition(fmt.start);
+            cursor.setPosition(fmt.start + fmt.length, QTextCursor::KeepAnchor);
+
+            QToolTip::showText(helpEvent->globalPos(), fmt.format.toolTip(), this, this->cursorRect(cursor));
+            //QToolTip::showText(helpEvent->globalPos(), fmt.format.toolTip());
+        }
+    }
+    return QPlainTextEdit::event(event);
 }
 
 void CSingleEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
