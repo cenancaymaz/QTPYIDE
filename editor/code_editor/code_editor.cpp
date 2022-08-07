@@ -14,6 +14,7 @@ CCodeEditor::CCodeEditor(QWidget *parent)
 
     pTabWidget = new QTabWidget(this);
     pTabWidget->setMovable(true);
+    connect(pTabWidget, &QTabWidget::currentChanged, this, &CCodeEditor::CurrentTabChanged);
 
     p_set->SettoDefaultFontSize(pTabWidget);
     LatestTabNo = 0;
@@ -97,7 +98,7 @@ void CCodeEditor::CreateSearchWidget()
 
 CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
 {
-    if(!FileInfo.fileName().isEmpty() || !FileInfo.fileName().isEmpty()){//if the tab created by selecting a file from file view
+    if(!FileInfo.fileName().isEmpty()){//if the tab created by selecting a file from file view
 
         if(mTabInfos.value(FileInfo.filePath())){//if there is a tab with the same file info
 
@@ -105,7 +106,6 @@ CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
         }
 
     }
-    //qDebug()<<FileInfo.filePath();
 
     //Create a tab
     CSingleEditor *tab = CreateAnEditor(FileInfo);
@@ -130,11 +130,11 @@ CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
     connect(cb, &QToolButton::clicked, this, &CCodeEditor::CloseTab);
     pTabWidget->tabBar()->setTabButton(pTabWidget->count() - 1, QTabBar::RightSide, cb);
 
-    //Set current index to created tab
-    pTabWidget->setCurrentIndex(pTabWidget->count() - 1);
-
     //Add the new tab to tab info map
     mTabInfos.insert(FileInfo.filePath(), tab);
+
+    //Set current index to created tab
+    pTabWidget->setCurrentIndex(pTabWidget->count() - 1);
 
     //Enable buttons in case of buttons are disabled by no tab situation
     emit EnableButtons(true);
@@ -174,6 +174,8 @@ void CCodeEditor::OpenFile(QFileInfo FileInfo)
         //connect tab's content change to content change control slot
         connect(p_tab, &CSingleEditor::ContentChanged, this, &CCodeEditor::ControlContentChange);
 
+        qDebug()<<"created";
+        CurrentTabChanged();
 
     }else{//The tab is already created. Open this tab
 
@@ -236,6 +238,20 @@ void CCodeEditor::CloseTab()
 
         emit EnableButtons(false);
     }
+
+}
+
+void CCodeEditor::CurrentTabChanged()
+{
+    //qDebug()<<pTabWidget->currentWidget()->toolTip();
+
+    CSingleEditor* p_tab = qobject_cast<CSingleEditor*>(pTabWidget->currentWidget());
+
+    if(p_tab){
+
+        emit CurrentTabPath(mTabInfos.key(p_tab));
+    }
+
 
 }
 
@@ -408,10 +424,6 @@ void CCodeEditor::SendSelected()
     }
 
     QString s = p_text_edit->textCursor().selection().toPlainText();
-
-    qDebug()<<s;
-    //s.replace("\n", "\r\n");
-
 
     if(!s.isEmpty()){
         emit InputEntered(s);

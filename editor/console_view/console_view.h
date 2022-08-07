@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "single_console.h"
+#include "input_line.h"
 
 class CConsoleView : public QFrame
 {
@@ -20,9 +21,7 @@ private:
 
     QTextEdit* CreateAConsole();
 
-    QLineEdit* pInputEdit;
-
-    QPushButton* pSendButton;
+    CInputLine* pInputLine;
 
 public slots:
 
@@ -39,8 +38,6 @@ private slots:
     void CloseTab();
 
     void TabPosControl();
-
-    void SendInputFromLine();
 
 
 };

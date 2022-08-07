@@ -16,10 +16,7 @@ CCodeManager::CCodeManager(QWidget *parent)
     //This widget should have fixed height
     setFixedHeight(40);
 
-    QLabel *p_label = new QLabel("Code Manager", this);
-    p_set->SettoDefaultFontSize(p_label);
-
-
+    CreateCurrentFilePathLabel();
     CreateSaveButton();
     CreateSaveAsButton();
     CreateRunSelectedButton();
@@ -31,7 +28,7 @@ CCodeManager::CCodeManager(QWidget *parent)
     QHBoxLayout *hl = new QHBoxLayout(this);
     hl->setContentsMargins(3, 3, 3, 3);
 
-    hl->addWidget(p_label);
+    hl->addWidget(pCurrentFilePathLabel);
 
     hl->addStretch(1);
 
@@ -40,6 +37,13 @@ CCodeManager::CCodeManager(QWidget *parent)
     hl->addWidget(pRunSelectedButton);
     hl->addWidget(pRunButton);
 
+}
+
+void CCodeManager::CreateCurrentFilePathLabel()
+{
+    CStartupSettings* p_set = GetStartupSettings();
+    pCurrentFilePathLabel = new QLabel("Code Manager", this);
+    p_set->SettoDefaultFontSize(pCurrentFilePathLabel);
 }
 
 void CCodeManager::CreateSaveButton()
@@ -102,4 +106,14 @@ void CCodeManager::EnableButtons(bool enable)
     pSaveAsButton->setEnabled(enable);
     pRunSelectedButton->setEnabled(enable);
     pRunButton->setEnabled(enable);
+}
+
+void CCodeManager::CurrentFilePathChanged(QString Path)
+{
+    pCurrentFilePathLabel->setText(Path.mid(Path.indexOf(mWorkingDir)));
+}
+
+void CCodeManager::WorkingDirChanged(QString DirName)
+{
+    mWorkingDir = DirName;
 }

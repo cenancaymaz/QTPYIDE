@@ -1,6 +1,7 @@
 #include "python_syntax_highlighter.h"
 #include <QDebug>
 #include <QDir>
+#include <QToolTip>
 
 #include "../../util/startup_settings.h"
 #include "../console_view/python_process.h"
@@ -163,24 +164,43 @@ void PythonSyntaxHighlighter::highlightBlock(const QString &text)
     char_format.setUnderlineColor(QColor(255,0,0));
     char_format.setFontUnderline(true);
 
-    //SyntaxControl();
 
     if(!mSyntaxControlReply.isEmpty()){
 
-        qDebug()<<"There is error:";
+        //We will be dealing with error string here
+//        qDebug()<<"There is error:";
 
-        QString err_str = mSyntaxControlReply.join("\n");
+//        QString err_str = mSyntaxControlReply.join("\n");
 
-        qDebug().noquote()<<err_str;
+//        qDebug().noquote()<<err_str;
 
-        qDebug()<<"Text: "<<text;
+//        qDebug()<<"Text: "<<text;
 
 
         if (mSyntaxControlReply[1].toUtf8() == text) {
 
             // The following line does not work !
-            char_format.setToolTip("Hasan");
+//            char_format.setToolTip("Hasan");
 
+            QVector<QTextLayout::FormatRange> fors = currentBlock().layout()->formats();
+            foreach(QTextLayout::FormatRange f, fors){
+
+
+                QTextCharFormat form = f.format;
+                form.setProperty(QTextFormat::TextToolTip,"hasan");
+                //form.setToolTip("hasan");
+                f.format = form;
+                //qDebug()<<f.format;
+
+            }
+
+//            QToolTip::showText(QPoint(100,100), "hasan");
+//            QTextCursor cursor(pDoc);
+//            cursor.movePosition(QTextCursor::Start);
+
+
+//            cursor.
+            //cursor.movePosition(currentBlock().position());
 
             qDebug()<<"Error catched!";
             setFormat(0, text.length(), char_format);

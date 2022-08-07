@@ -46,6 +46,11 @@ QString CFilesView::GetWorkingPath()
     return mWorkingPath;
 }
 
+QString CFilesView::GetWorkingDir()
+{
+    return mWorkingDir;
+}
+
 void CFilesView::CreateWorkingDirButton()
 {
     pWorkingDirButton = new QPushButton(this);
@@ -147,6 +152,7 @@ void CFilesView::OnWorkingDirButtonClicked()
     mWorkingDir = QDir(mWorkingPath).dirName();
 
     emit WorkingPathChanged(mWorkingPath);
+    emit WorkingDirChanged(mWorkingDir);
 
     //Set current dir button
     pWorkingDirButton->setText(mWorkingDir);
@@ -222,9 +228,6 @@ void CFilesView::DeleteActionTriggered()
 
 void CFilesView::NewFileActionTriggered()
 {
-    qDebug()<<"New File triggered";
-
-
     //Take new file name from user
     bool ok;
     QString file_name = QInputDialog::getText(this, tr("New File"),

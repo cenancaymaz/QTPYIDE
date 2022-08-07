@@ -15,6 +15,7 @@ SOURCES += \
     editor/code_editor/single_editor.cpp \
     editor/code_manager/code_manager.cpp \
     editor/console_view/console_view.cpp \
+    editor/console_view/input_line.cpp \
     editor/console_view/python_process.cpp \
     editor/console_view/single_console.cpp \
     editor/files_view/files_view.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     editor/code_editor/single_editor.h \
     editor/code_manager/code_manager.h \
     editor/console_view/console_view.h \
+    editor/console_view/input_line.h \
     editor/console_view/python_process.h \
     editor/console_view/single_console.h \
     editor/files_view/files_view.h \

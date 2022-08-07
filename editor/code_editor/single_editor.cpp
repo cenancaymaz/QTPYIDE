@@ -117,8 +117,6 @@ void CSingleEditor::updateLineNumberArea(int /*slider_pos*/)
 }
 void CSingleEditor::updateLineNumberArea()
 {
-
-    qDebug()<<"Update";
     /*
      * When the signal is emitted, the sliderPosition has been adjusted according to the action,
      * but the value has not yet been propagated (meaning the valueChanged() signal was not yet emitted),

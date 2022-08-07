@@ -31,7 +31,6 @@ void CPythonProcess::StartProcess(QString Path, QString Script)
     //-i is for forcing prompts after script
     //-q is for clearing interactive startup
 
-    qDebug()<<Path;
     setWorkingDirectory(Path);
     start(QString("python -i -q %2").arg(Script));
 }

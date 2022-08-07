@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     QDockWidget *dock1 = new QDockWidget(tr("Files"),this);
     dock1->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     pFilesView = new CFilesView(dock1);
+    pCodeManager->WorkingDirChanged(pFilesView->GetWorkingDir());
+    pCodeManager->CurrentFilePathChanged(pFilesView->GetWorkingDir());
+    connect(pFilesView, &CFilesView::WorkingDirChanged, pCodeManager, &CCodeManager::WorkingDirChanged);
     dock1->setWidget(pFilesView);
     dock1->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     addDockWidget(Qt::LeftDockWidgetArea, dock1);
@@ -36,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     QDockWidget *dock2 = new QDockWidget(tr("Code Editor"),this);
     dock2->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     pCodeEditor = new CCodeEditor(dock2);
+    connect(pCodeEditor, &CCodeEditor::CurrentTabPath, pCodeManager, &CCodeManager::CurrentFilePathChanged);
     dock2->setWidget(pCodeEditor);
     dock2->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
     dock2->setTitleBarWidget(0);

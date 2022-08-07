@@ -12,6 +12,10 @@ public:
 
 private:
 
+    QLabel* pCurrentFilePathLabel;
+    QString mWorkingDir;
+
+    void CreateCurrentFilePathLabel();
     CBorderlessButton* pSaveButton;
     void CreateSaveButton();
     CBorderlessButton* pSaveAsButton;
@@ -24,6 +28,8 @@ private:
 
 public slots:
     void EnableButtons(bool enable);
+    void CurrentFilePathChanged(QString Path);
+    void WorkingDirChanged(QString DirName);
 
 signals:
     void SaveFile();

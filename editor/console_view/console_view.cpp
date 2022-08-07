@@ -46,26 +46,17 @@ CConsoleView::CConsoleView(QString InitialPath, QWidget *parent)
     //The First Console
     AddEmptyTab();
 
-    pInputEdit = new QLineEdit(this);
+    //Create Input Line and connect it to the input mechanism
 
-    connect(pInputEdit, &QLineEdit::returnPressed, this, &CConsoleView::SendInputFromLine);
-
-    pSendButton = new QPushButton(">", this);
-    pSendButton->setFixedWidth(30);
-    connect(pSendButton, &QPushButton::clicked, this, &CConsoleView::SendInputFromLine);
+    pInputLine = new CInputLine(this);
+    connect(pInputLine, &CInputLine::InputSent, this, &CConsoleView::WriteInput);
 
 
+    //Widget layouting
     QVBoxLayout *vl = new QVBoxLayout(this);
     vl->setContentsMargins(3, 3, 3, 3);
     vl->addWidget(pTabWidget);
-
-    QHBoxLayout* hl = new QHBoxLayout();
-
-    hl->addWidget(new QLabel(tr("In:"), this));
-    hl->addWidget(pInputEdit);
-    hl->addWidget(pSendButton);
-
-    vl->addLayout(hl);
+    vl->addWidget(pInputLine);
 }
 
 void CConsoleView::WriteInput(QString text)
@@ -80,8 +71,11 @@ void CConsoleView::WriteInput(QString text)
 
     }
 
-    //Sen input to the console
+    //Send input to the console
     p_single_console->WriteInput(text);
+
+    //Add it to the history stack of the input line
+    pInputLine->AddToHistoryStack(text);
 
 }
 
@@ -162,13 +156,3 @@ void CConsoleView::TabPosControl()
 
     }
 }
-
-void CConsoleView::SendInputFromLine()
-{
-    pInputEdit->setFocus();
-    if(!pInputEdit->text().isEmpty()){
-        WriteInput(pInputEdit->text());
-        pInputEdit->clear();
-    }
-}
-

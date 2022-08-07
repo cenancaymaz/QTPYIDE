@@ -26,7 +26,7 @@ private:
     CBorderlessButton* pCancelSearchButton;
     void CreateSearchWidget();
 
-    QMap<QString, CSingleEditor*> mTabInfos;// Path or Designeted name for new file - Tab
+    QMap<QString, CSingleEditor*> mTabInfos;// FilePath of the file - Tab
     QVector<PythonSyntaxHighlighter*> mHighligtherVector; //it is here just for clearing the false positive meamory leak warning
     CSingleEditor* AddTab(QFileInfo FileInfo = QFileInfo());
 
@@ -46,14 +46,16 @@ private slots:
 
     void ControlContentChange();
     void CloseTab();
+    void CurrentTabChanged();
 
     void FindPrevButtonClicked();
     void FindNextButtonClicked();
     void CancelSearchButtonClicked();
 
 signals:
-    void InputEntered(QString text);
-    void EnableButtons(bool enable);
+    void InputEntered(QString Text);
+    void EnableButtons(bool Enable);
+    void CurrentTabPath(QString Path);
 
 };
 

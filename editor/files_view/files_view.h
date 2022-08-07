@@ -10,6 +10,7 @@ public:
     explicit CFilesView(QWidget *parent = nullptr);
 
     QString GetWorkingPath();
+    QString GetWorkingDir();
 
 private:
 
@@ -44,13 +45,11 @@ private slots:
     void DeleteActionTriggered();
     void NewFileActionTriggered();
 
-
 signals:
 
     void FileSelected(QFileInfo FileInfo);
     void WorkingPathChanged(QString Path);
-
-
+    void WorkingDirChanged(QString Path);
 };
 
 #endif // FILES_VIEW_H
