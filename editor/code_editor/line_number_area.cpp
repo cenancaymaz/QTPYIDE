@@ -1,17 +1,17 @@
 #include "line_number_area.h"
 
-#include "single_editor.h"
 
-CLineNumberArea::CLineNumberArea(QPlainTextEdit *editor) : QWidget(editor) {
+
+CLineNumberArea::CLineNumberArea(CSingleEditor *editor) : QWidget(editor) {
     codeEditor = editor;
 
 
 }
 
 QSize CLineNumberArea::sizeHint() const {
-    return QSize(((CSingleEditor *)codeEditor)->lineNumberAreaWidth(), 0);
+    return QSize(codeEditor->lineNumberAreaWidth(), 0);
 }
 
 void CLineNumberArea::paintEvent(QPaintEvent *event) {
-    ((CSingleEditor *)codeEditor)->lineNumberAreaPaintEvent(event);
+    codeEditor->lineNumberAreaPaintEvent(event);
 }

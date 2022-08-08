@@ -167,12 +167,22 @@ void PythonSyntaxHighlighter::highlightBlock(const QString &text)
 
     if(!mSyntaxControlReply.isEmpty()){
 
-        qDebug()<<"error catched: "<<mSyntaxControlReply[1].toUtf8();
+        //qDebug()<<"error catched: "<<mSyntaxControlReply[1].toUtf8();
         if (mSyntaxControlReply[1].toUtf8() == text) {
 
             char_format.setToolTip(mSyntaxControlReply.join("\n"));
             setFormat(0, text.length(), char_format);
         }
+
+//        QTextCursor cursor(pDoc);
+//        cursor.movePosition(QTextCursor::Start);
+//        cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 5);
+//        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+//        //cursor.setCharFormat(char_format);
+
+//        qDebug()<<"Selected text:" <<cursor.selectedText();
+
+
     }
 }
 
@@ -263,7 +273,7 @@ void PythonSyntaxHighlighter::SyntaxControl()
 
 void PythonSyntaxHighlighter::SyntaxControlReceive(QString ReplyLine)
 {
-    qDebug()<<ReplyLine;
+    //qDebug()<<ReplyLine;
     mSyntaxControlReply.append(ReplyLine);
 }
 

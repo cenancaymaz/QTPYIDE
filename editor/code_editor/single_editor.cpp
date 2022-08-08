@@ -7,7 +7,7 @@
 
 
 CSingleEditor::CSingleEditor(QWidget *parent) :
-    QPlainTextEdit(parent)
+    QTextEdit(parent)
 {
     setMouseTracking(true);
 
@@ -29,7 +29,7 @@ CSingleEditor::CSingleEditor(QWidget *parent) :
 
 void CSingleEditor::SetCurrentContent(QString Content)
 {
-    setPlainText(Content);
+    setText(Content);
     //setText(Content);
     mCurrentContent = Content;
 }
@@ -122,10 +122,10 @@ bool CSingleEditor::event(QEvent *event)
             cursor.setPosition(fmt.start + fmt.length, QTextCursor::KeepAnchor);
 
             QToolTip::showText(helpEvent->globalPos(), fmt.format.toolTip(), this, this->cursorRect(cursor));
-            //QToolTip::showText(helpEvent->globalPos(), fmt.format.toolTip());
+
         }
     }
-    return QPlainTextEdit::event(event);
+    return QTextEdit::event(event);
 }
 
 void CSingleEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
@@ -187,6 +187,11 @@ void CSingleEditor::updateLineNumberArea()
 
 }
 
+void CSingleEditor::insertFromMimeData(const QMimeData *source)
+{
+    QTextEdit::insertPlainText(source->text());
+}
+
 void CSingleEditor::keyPressEvent(QKeyEvent *e)
 {
     //Capture CTRL-F for search widget
@@ -195,7 +200,7 @@ void CSingleEditor::keyPressEvent(QKeyEvent *e)
         emit OpenSearchWidget(textCursor().selectedText());
     }
 
-    QPlainTextEdit::keyPressEvent(e);
+    QTextEdit::keyPressEvent(e);
 }
 
 void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
@@ -251,13 +256,13 @@ void CSingleEditor::wheelEvent(QWheelEvent *e)
         updateLineNumberArea();
         return;
     }
-    QPlainTextEdit::wheelEvent(e);
+    QTextEdit::wheelEvent(e);
 }
 
 
 void CSingleEditor::resizeEvent(QResizeEvent *e)
 {
-    QPlainTextEdit::resizeEvent(e);
+    QTextEdit::resizeEvent(e);
 
     QRect cr = this->contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
