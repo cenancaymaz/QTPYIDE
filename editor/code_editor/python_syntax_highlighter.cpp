@@ -167,10 +167,42 @@ void PythonSyntaxHighlighter::highlightBlock(const QString &text)
 
     if(!mSyntaxControlReply.isEmpty()){
 
-        qDebug()<<"error catched: "<<mSyntaxControlReply[1].toUtf8();
+        //We will be dealing with error string here
+//        qDebug()<<"There is error:";
+
+//        QString err_str = mSyntaxControlReply.join("\n");
+
+//        qDebug().noquote()<<err_str;
+
+//        qDebug()<<"Text: "<<text;
+
+
         if (mSyntaxControlReply[1].toUtf8() == text) {
 
-            char_format.setToolTip(mSyntaxControlReply.join("\n"));
+            // The following line does not work !
+//            char_format.setToolTip("Hasan");
+
+            QVector<QTextLayout::FormatRange> fors = currentBlock().layout()->formats();
+            foreach(QTextLayout::FormatRange f, fors){
+
+
+                QTextCharFormat form = f.format;
+                form.setProperty(QTextFormat::TextToolTip,"hasan");
+                //form.setToolTip("hasan");
+                f.format = form;
+                //qDebug()<<f.format;
+
+            }
+
+//            QToolTip::showText(QPoint(100,100), "hasan");
+//            QTextCursor cursor(pDoc);
+//            cursor.movePosition(QTextCursor::Start);
+
+
+//            cursor.
+            //cursor.movePosition(currentBlock().position());
+
+            qDebug()<<"Error catched!";
             setFormat(0, text.length(), char_format);
         }
     }
@@ -254,7 +286,7 @@ void PythonSyntaxHighlighter::SyntaxControl()
     //pDoc = qobject_cast<QTextDocument*>(parent());
 
     if(isConCh){
-        emit pDoc->contentsChange(LastPos, LastRem, LastAdd);
+        pDoc->contentsChange(LastPos, LastRem, LastAdd);
     }
 
 
@@ -263,7 +295,6 @@ void PythonSyntaxHighlighter::SyntaxControl()
 
 void PythonSyntaxHighlighter::SyntaxControlReceive(QString ReplyLine)
 {
-    qDebug()<<ReplyLine;
     mSyntaxControlReply.append(ReplyLine);
 }
 

@@ -19,8 +19,6 @@ public:
     void FindNext(QString Text);
     void FindPrev(QString Text);
 
-    bool event(QEvent *event);
-
 signals:
 
     void ContentChanged();
