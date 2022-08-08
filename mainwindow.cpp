@@ -97,14 +97,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     delete p_set;
 
 }
 
 void MainWindow::SetAppTheme()
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     qApp->setStyle(QStyleFactory::create("Fusion"));
 

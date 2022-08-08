@@ -4,7 +4,7 @@
 CFilesView::CFilesView(QWidget *parent)
     : QFrame{parent}
 {   
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     setStyleSheet(QString("CFilesView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
@@ -102,7 +102,7 @@ void CFilesView::CreateTree()
     connect(pTree, &QTreeView::doubleClicked, this, &CFilesView::TreeDoubleClicked);
 
     //For setting the font of the tree  
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     p_set->SettoDefaultFontSize(pTree);
     p_set->SettoDefaultFontSize(pTree->header());
 

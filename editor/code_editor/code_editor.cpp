@@ -7,7 +7,7 @@
 CCodeEditor::CCodeEditor(QWidget *parent)
     : QFrame{parent}
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();
 
     setStyleSheet(QString("CCodeEditor{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
@@ -49,7 +49,7 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
 
 void CCodeEditor::CreateSearchWidget()
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Create the search widget and set its border
     pSearchWidget = new QFrame(this);
@@ -126,7 +126,7 @@ CSingleEditor *CCodeEditor::AddTab(QFileInfo FileInfo)
     QToolButton *cb = new QToolButton();
     cb->setText("x");
     cb->setStyleSheet("border : none");
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     p_set->SettoDefaultFontSize(cb);
     connect(cb, &QToolButton::clicked, this, &CCodeEditor::CloseTab);
     pTabWidget->tabBar()->setTabButton(pTabWidget->count() - 1, QTabBar::RightSide, cb);

@@ -16,12 +16,12 @@ SOURCES += \
     editor/code_manager/code_manager.cpp \
     editor/console_view/console_view.cpp \
     editor/console_view/input_line.cpp \
-    editor/console_view/python_process.cpp \
     editor/console_view/single_console.cpp \
     editor/files_view/files_view.cpp \
     main.cpp \
     mainwindow.cpp \
     util/borderless_button.cpp \
+    util/python_process.cpp \
     util/startup_settings.cpp
 
 HEADERS += \
@@ -32,11 +32,11 @@ HEADERS += \
     editor/code_manager/code_manager.h \
     editor/console_view/console_view.h \
     editor/console_view/input_line.h \
-    editor/console_view/python_process.h \
     editor/console_view/single_console.h \
     editor/files_view/files_view.h \
     mainwindow.h \
     util/borderless_button.h \
+    util/python_process.h \
     util/startup_settings.h
 
 TRANSLATIONS += \

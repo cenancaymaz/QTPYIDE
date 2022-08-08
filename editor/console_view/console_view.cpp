@@ -5,7 +5,7 @@
 #include "../../util/startup_settings.h"
 
 
-#include "python_process.h"
+#include "../../util/python_process.h"
 
 CConsoleView::CConsoleView(QString InitialPath, QWidget *parent)
     : QFrame{parent}
@@ -13,7 +13,7 @@ CConsoleView::CConsoleView(QString InitialPath, QWidget *parent)
 
     mWorkingPath = InitialPath;
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     setStyleSheet(QString("CConsoleView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
@@ -114,7 +114,7 @@ CSingleConsole *CConsoleView::AddTab()
     cb->setText("x");
     cb->setStyleSheet("border : none");
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     p_set->SettoDefaultFontSize(cb);
 
     connect(cb, &QToolButton::clicked, this, &CConsoleView::CloseTab);

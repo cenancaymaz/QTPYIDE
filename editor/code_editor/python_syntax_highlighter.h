@@ -2,10 +2,8 @@
 #define CPYTHONSYNTAXHIGHLIGHTER_H
 
 
-#include <QSyntaxHighlighter>
-#include <QTimer>
-#include <QFileInfo>
-#include <QTextDocument>
+#include <QtWidgets>
+
 
 //! Container to describe a highlighting rule. Based on a regular expression, a relevant match # and the format.
 class HighlightingRule
@@ -59,7 +57,7 @@ private:
     int LastPos;
     int LastRem;
     int LastAdd;
-    bool isConCh;
+
 
 private slots:
 

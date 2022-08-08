@@ -10,7 +10,9 @@ class CStartupSettings : public QObject
 {
     Q_OBJECT
 public:
-    explicit CStartupSettings(QObject *parent = nullptr);
+
+    /// Static getter
+    static CStartupSettings* GetInstance();
 
     void SettoDefaultFontSize(QWidget *Widget);
 
@@ -18,27 +20,17 @@ public:
 
     bool mIsDarkMode = false;
 
+    QString mPythonVersion;
+
 private:
+
+    explicit CStartupSettings(QObject *parent = nullptr);
 
     int mDefaultFontSize;
 
 
 signals:
 
-};
-
-
-static CStartupSettings* pStartupSettingInstance = 0;
-
-[[maybe_unused]]static CStartupSettings* GetStartupSettings(){
-
-    if(!pStartupSettingInstance){
-
-        pStartupSettingInstance = new CStartupSettings();
-
-    }
-
-    return pStartupSettingInstance;
 };
 
 

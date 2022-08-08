@@ -205,7 +205,7 @@ void CSingleEditor::keyPressEvent(QKeyEvent *e)
 
 void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Take the standart menu
     QMenu* p_menu = createStandardContextMenu(e->pos());
@@ -311,7 +311,7 @@ int CSingleEditor::getFirstVisibleBlockId()
 
 void CSingleEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     this->verticalScrollBar()->setSliderPosition(this->verticalScrollBar()->sliderPosition());
 

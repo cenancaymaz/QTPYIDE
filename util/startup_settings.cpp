@@ -1,10 +1,18 @@
 #include "startup_settings.h"
 
 #include <QSettings>
+#include "python_process.h"
+#include <QDebug>
+
 
 CStartupSettings::CStartupSettings(QObject *parent)
     : QObject{parent}
 {
+    //Get the python version of the system
+    CPythonProcess* p_python_process = new CPythonProcess(this);
+    mPythonVersion = p_python_process->GetPythonVersion();
+    delete p_python_process;
+
     mDefaultFontSize = 9;
 
     #ifdef Q_OS_WIN
@@ -72,6 +80,12 @@ CStartupSettings::CStartupSettings(QObject *parent)
         mColors.insert(21, "#eba0a0");//base03 - press color
     }
 
+}
+
+CStartupSettings *CStartupSettings::GetInstance()
+{
+    static CStartupSettings* p_instance = new CStartupSettings();
+    return p_instance;
 }
 
 void CStartupSettings::SettoDefaultFontSize(QWidget *Widget)

@@ -15,7 +15,7 @@ CBorderlessButton::CBorderlessButton(QIcon icon, QWidget *parent)
 
 void CBorderlessButton::SetStyle()
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Create a borderless button stylesheet
     QString sty = QString("QPushButton{"

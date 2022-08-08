@@ -8,7 +8,7 @@
 CCodeManager::CCodeManager(QWidget *parent)
     : QFrame{parent}
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //for border style
     setStyleSheet(QString("CCodeManager{ border: 1px solid %1; }").arg(p_set->mColors[10]));
@@ -41,7 +41,7 @@ CCodeManager::CCodeManager(QWidget *parent)
 
 void CCodeManager::CreateCurrentFilePathLabel()
 {
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     pCurrentFilePathLabel = new QLabel("Code Manager", this);
     p_set->SettoDefaultFontSize(pCurrentFilePathLabel);
 }

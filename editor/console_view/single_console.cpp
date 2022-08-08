@@ -12,7 +12,7 @@ CSingleConsole::CSingleConsole(QWidget *parent)
     connect(pPythonProcess, &CPythonProcess::OnErrOut, this, &CSingleConsole::OnErrOut);
 
     //Initialize and insert input indicator
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
     mInputIndCol = p_set->mColors[6];
     InsertInputInd();
 }
@@ -25,7 +25,7 @@ void CSingleConsole::StartProcess(QString Path, QString Script)
 void CSingleConsole::WriteInput(QString Inp)
 {
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Set cursor to the end of the edit
     QTextCursor new_cursor = textCursor();
@@ -81,7 +81,7 @@ void CSingleConsole::OnStdOut(QString Out)
     //Delete Input Ind
     DeleteLastLine();
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Set cursor to the end of the edit
     QTextCursor new_cursor = textCursor();
@@ -104,7 +104,7 @@ void CSingleConsole::OnErrOut(QString Err)
     //Delete Input Ind
     DeleteLastLine();
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();;
 
     //Set cursor to the end of the edit
     QTextCursor new_cursor = textCursor();

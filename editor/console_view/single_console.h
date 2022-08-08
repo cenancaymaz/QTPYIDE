@@ -2,7 +2,7 @@
 #define CSINGLECONSOLE_H
 
 #include <QtWidgets>
-#include "python_process.h"
+#include "../../util/python_process.h"
 
 class CSingleConsole : public QTextEdit
 {

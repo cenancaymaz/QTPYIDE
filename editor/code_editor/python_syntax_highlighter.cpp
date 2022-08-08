@@ -4,7 +4,7 @@
 #include <QToolTip>
 
 #include "../../util/startup_settings.h"
-#include "../console_view/python_process.h"
+#include "../../util/python_process.h"
 
 #ifdef Q_OS_WIN
     #include <windows.h>
@@ -20,7 +20,6 @@ PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocume
     LastPos = 0;
     LastRem = 0;
     LastAdd = 0;
-    isConCh = false;
 
 
     pSyntaxControlTimer = new QTimer(this);
@@ -50,7 +49,7 @@ PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocume
 
     braces = QStringList() << "{" << "}" << "\\(" << "\\)" << "\\[" << "]";
 
-    CStartupSettings* p_set = GetStartupSettings();
+    CStartupSettings* p_set = CStartupSettings::GetInstance();
 
     basicStyles.insert("keyword", getTextCharFormat(p_set->mColors[11]));//green
     basicStyles.insert("operator", getTextCharFormat(p_set->mColors[8]));//red
@@ -73,12 +72,12 @@ PythonSyntaxHighlighter::PythonSyntaxHighlighter(QFileInfo FileInfo, QTextDocume
 
 PythonSyntaxHighlighter::~PythonSyntaxHighlighter()
 {
-    //syn_hello.cpython-310.pyc
+
     //Delete temporary script file
     DeleteSynFile(mFileInfo.dir().path() + "/syn_" + mFileInfo.fileName());
     //Delete temporary compiled file
     //Python version control will be added
-    DeleteSynFile(mFileInfo.dir().path() + "/__pycache__/syn_" + mFileInfo.fileName().remove(".py") + ".cpython-310.pyc");
+    DeleteSynFile(mFileInfo.dir().path() + "/__pycache__/syn_" + mFileInfo.fileName().remove(".py") + ".cpython-" + CStartupSettings::GetInstance()->mPythonVersion + ".pyc");
 }
 
 
@@ -159,28 +158,25 @@ void PythonSyntaxHighlighter::highlightBlock(const QString &text)
         matchMultiline(text, triDoubleQuote, 2, basicStyles.value("string2"));
 
 
-    QTextCharFormat char_format;
-    char_format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
-    char_format.setUnderlineColor(QColor(255,0,0));
-    char_format.setFontUnderline(true);
 
 
+    //Syntax error
     if(!mSyntaxControlReply.isEmpty()){
+
+        QTextCharFormat char_format;
+        char_format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+        char_format.setUnderlineColor(QColor(255,0,0));
+        char_format.setFontUnderline(true);
+        char_format.setToolTip(mSyntaxControlReply.join("\n"));
 
         //qDebug()<<"error catched: "<<mSyntaxControlReply[1].toUtf8();
         if (mSyntaxControlReply[1].toUtf8() == text) {
 
-            char_format.setToolTip(mSyntaxControlReply.join("\n"));
+
             setFormat(0, text.length(), char_format);
+        }else{
+
         }
-
-//        QTextCursor cursor(pDoc);
-//        cursor.movePosition(QTextCursor::Start);
-//        cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 5);
-//        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-//        //cursor.setCharFormat(char_format);
-
-//        qDebug()<<"Selected text:" <<cursor.selectedText();
 
 
     }
@@ -261,19 +257,14 @@ void PythonSyntaxHighlighter::SyntaxControl()
     connect(p_python_process, &CPythonProcess::OnErrOut, this, &PythonSyntaxHighlighter::SyntaxControlReceive);
     p_python_process->ControlSyntax(syn_file_path);
 
-    //pDoc = qobject_cast<QTextDocument*>(parent());
-
-    if(isConCh){
-        emit pDoc->contentsChange(LastPos, LastRem, LastAdd);
-    }
-
+    emit pDoc->contentsChange(LastPos, LastRem, LastAdd);
 
     delete p_python_process;
 }
 
 void PythonSyntaxHighlighter::SyntaxControlReceive(QString ReplyLine)
 {
-    //qDebug()<<ReplyLine;
+    qDebug()<<ReplyLine;
     mSyntaxControlReply.append(ReplyLine);
 }
 
@@ -314,10 +305,19 @@ void PythonSyntaxHighlighter::DeleteSynFile(QString FilePath)
 
 void PythonSyntaxHighlighter::SaveLastContentChange(int position, int charsRemoved, int charsAdded)
 {
-    LastPos = position;
+    if(!mSyntaxControlReply.isEmpty()){
+        QTextCursor cursor(pDoc);
+        cursor.movePosition(QTextCursor::Start);
+        cursor = pDoc->find(mSyntaxControlReply[1]);
+        LastPos = cursor.position();
+    }else{
+        LastPos = position;
+    }
+    //LastPos = position;
     LastRem = charsRemoved;
     LastAdd = charsAdded;
-    isConCh = true;
 }
+
+
 
 
