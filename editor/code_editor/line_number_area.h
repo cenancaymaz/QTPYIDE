@@ -2,15 +2,14 @@
 #define CLINENUMBERAREA_H
 
 #include <QWidget>
-#include <QTextEdit>
-#include <QPlainTextEdit>
+#include "single_editor.h"
 
 class CLineNumberArea : public QWidget
 {
     Q_OBJECT
 
     public:
-        CLineNumberArea(QPlainTextEdit *editor);
+        CLineNumberArea(CSingleEditor *editor);
 
         QSize sizeHint() const;
 
@@ -18,7 +17,7 @@ class CLineNumberArea : public QWidget
         void paintEvent(QPaintEvent *event);
 
     private:
-        QPlainTextEdit *codeEditor;
+        CSingleEditor *codeEditor;
 
 };
 

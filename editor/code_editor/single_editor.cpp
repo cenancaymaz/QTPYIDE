@@ -7,8 +7,10 @@
 
 
 CSingleEditor::CSingleEditor(QWidget *parent) :
-    QPlainTextEdit(parent)
+    QTextEdit(parent)
 {
+    setMouseTracking(true);
+
     mTextFound = false;
     mSearchedText = "";
 
@@ -27,7 +29,7 @@ CSingleEditor::CSingleEditor(QWidget *parent) :
 
 void CSingleEditor::SetCurrentContent(QString Content)
 {
-    setPlainText(Content);
+    setText(Content);
     //setText(Content);
     mCurrentContent = Content;
 }
@@ -101,6 +103,31 @@ void CSingleEditor::FindPrev(QString Text)
     }
 }
 
+bool CSingleEditor::event(QEvent *event)
+{
+    if(event->type() == QEvent::ToolTip){
+
+        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+
+        QPoint pos = helpEvent->pos();
+        pos.setX(pos.x() - viewportMargins().left());
+        pos.setY(pos.y() - viewportMargins().top());
+        QTextCursor cursor = cursorForPosition(pos);
+
+        QVector<QTextLayout::FormatRange> fmts = cursor.block().layout()->formats();
+
+        foreach(QTextLayout::FormatRange fmt, fmts){
+
+            cursor.setPosition(fmt.start);
+            cursor.setPosition(fmt.start + fmt.length, QTextCursor::KeepAnchor);
+
+            QToolTip::showText(helpEvent->globalPos(), fmt.format.toolTip(), this, this->cursorRect(cursor));
+
+        }
+    }
+    return QTextEdit::event(event);
+}
+
 void CSingleEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
@@ -160,6 +187,11 @@ void CSingleEditor::updateLineNumberArea()
 
 }
 
+void CSingleEditor::insertFromMimeData(const QMimeData *source)
+{
+    QTextEdit::insertPlainText(source->text());
+}
+
 void CSingleEditor::keyPressEvent(QKeyEvent *e)
 {
     //Capture CTRL-F for search widget
@@ -168,7 +200,7 @@ void CSingleEditor::keyPressEvent(QKeyEvent *e)
         emit OpenSearchWidget(textCursor().selectedText());
     }
 
-    QPlainTextEdit::keyPressEvent(e);
+    QTextEdit::keyPressEvent(e);
 }
 
 void CSingleEditor::contextMenuEvent(QContextMenuEvent *e)
@@ -224,13 +256,13 @@ void CSingleEditor::wheelEvent(QWheelEvent *e)
         updateLineNumberArea();
         return;
     }
-    QPlainTextEdit::wheelEvent(e);
+    QTextEdit::wheelEvent(e);
 }
 
 
 void CSingleEditor::resizeEvent(QResizeEvent *e)
 {
-    QPlainTextEdit::resizeEvent(e);
+    QTextEdit::resizeEvent(e);
 
     QRect cr = this->contentsRect();
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));

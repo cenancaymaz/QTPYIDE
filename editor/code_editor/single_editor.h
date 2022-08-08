@@ -4,7 +4,7 @@
 #include <QTextEdit>
 #include <QPlainTextEdit>
 
-class CSingleEditor : public QPlainTextEdit
+class CSingleEditor : public QTextEdit
 {
     Q_OBJECT
 public:
@@ -18,6 +18,8 @@ public:
 
     void FindNext(QString Text);
     void FindPrev(QString Text);
+
+    bool event(QEvent *event);
 
 signals:
 
@@ -45,6 +47,8 @@ private:
 
     bool mTextFound;
     QString mSearchedText;
+
+    void insertFromMimeData(const QMimeData* source );
 
     //Events
     void keyPressEvent(QKeyEvent *e);

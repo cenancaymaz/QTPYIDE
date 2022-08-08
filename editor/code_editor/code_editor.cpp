@@ -36,11 +36,12 @@ CSingleEditor *CCodeEditor::CreateAnEditor(QFileInfo FileInfo)
 
     //Create Python highligter and bound it to the Single editor
     PythonSyntaxHighlighter *p_python_highlighter = new PythonSyntaxHighlighter(FileInfo, p_text_edit->document());
+    mHighligtherVector.append(p_python_highlighter);
 
     //Add CTRL-F funcionality
     connect(p_text_edit, &CSingleEditor::OpenSearchWidget, this, &CCodeEditor::OpenSearchWidget);
 
-    mHighligtherVector.append(p_python_highlighter);
+
 
 
     return p_text_edit;
