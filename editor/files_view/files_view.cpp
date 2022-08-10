@@ -9,9 +9,7 @@ CFilesView::CFilesView(QWidget *parent)
     setStyleSheet(QString("CFilesView{ border: 1px solid %1; }").arg(p_set->mColors[10]));
 
     //Initial dir
-    mWorkingPath = QDir::currentPath();
-    mWorkingDir = QDir::current().dirName();
-
+    setWorkingPath(QDir::currentPath());
 
     //For setting the font of the Frame
 
@@ -41,6 +39,15 @@ CFilesView::CFilesView(QWidget *parent)
 
 }
 
+CFilesView::~CFilesView()
+{
+    foreach(QString path, mOldWorkingPaths){
+
+        QDir dir(path + "/__pycache__");
+        dir.removeRecursively();
+    }
+}
+
 QString CFilesView::GetWorkingPath()
 {
     return mWorkingPath;
@@ -49,6 +56,17 @@ QString CFilesView::GetWorkingPath()
 QString CFilesView::GetWorkingDir()
 {
     return mWorkingDir;
+}
+
+void CFilesView::setWorkingPath(const QString &newWorkingPath)
+{
+    if (mWorkingPath == newWorkingPath)
+        return;
+
+    mWorkingPath = newWorkingPath;
+    mWorkingDir = QDir(mWorkingPath).dirName();
+
+    mOldWorkingPaths.append(mWorkingPath);
 }
 
 void CFilesView::CreateWorkingDirButton()
@@ -148,8 +166,7 @@ void CFilesView::OnWorkingDirButtonClicked()
 
     if(path.isEmpty()) return; //Directory is not selected
 
-    mWorkingPath = path;
-    mWorkingDir = QDir(mWorkingPath).dirName();
+    setWorkingPath(path);
 
     emit WorkingPathChanged(mWorkingPath);
     emit WorkingDirChanged(mWorkingDir);

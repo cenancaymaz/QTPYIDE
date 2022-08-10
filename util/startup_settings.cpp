@@ -9,9 +9,12 @@ CStartupSettings::CStartupSettings(QObject *parent)
     : QObject{parent}
 {
     //Get the python version of the system
-    CPythonProcess* p_python_process = new CPythonProcess(this);
-    mPythonVersion = p_python_process->GetPythonVersion();
-    delete p_python_process;
+    //Because of the git problem, we cannot use this in this pc
+//    CPythonProcess* p_python_process = new CPythonProcess(this);
+//    mPythonVersion = p_python_process->GetPythonVersion();
+//    delete p_python_process;
+
+    mPythonVersion = "310";
 
     mDefaultFontSize = 9;
 

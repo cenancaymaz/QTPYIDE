@@ -8,14 +8,19 @@ class CFilesView : public QFrame
     Q_OBJECT
 public:
     explicit CFilesView(QWidget *parent = nullptr);
+    ~CFilesView();
 
     QString GetWorkingPath();
     QString GetWorkingDir();
+
+    void setWorkingPath(const QString &newWorkingPath);
 
 private:
 
     QString mWorkingPath;
     QString mWorkingDir;
+
+    QVector<QString> mOldWorkingPaths;
 
     QPushButton *pWorkingDirButton;
     void CreateWorkingDirButton();
